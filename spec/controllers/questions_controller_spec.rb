@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe QuestionsController, type: :controller do
-  let (:q) {FactoryGirl.create(:question)}
+  let (:q) {create(:question)}
 
   describe "GET #index" do
     before {get :index}

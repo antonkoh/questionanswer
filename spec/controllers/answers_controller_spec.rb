@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe AnswersController, type: :controller do
-  let (:q) {FactoryGirl.create(:question)}
+  let (:q) {create(:question)}
 
   describe "GET #new" do
     before {get :new, question_id: q}
@@ -19,26 +19,26 @@ RSpec.describe AnswersController, type: :controller do
 
 
     it 'loads a question' do
-      post :create,question_id: q, answer: FactoryGirl.attributes_for(:answer)
+      post :create,question_id: q, answer: attributes_for(:answer)
       expect(assigns(:question)).to eq q
     end
 
     context "when saved successfully" do
       it 'creates new answer in DB for the given question' do
-        expect {post :create, question_id: q, answer: FactoryGirl.attributes_for(:answer)}.to change(q.answers, :count).by(1)
+        expect {post :create, question_id: q, answer: attributes_for(:answer)}.to change(q.answers, :count).by(1)
       end
       it 'redirects to show view for question' do
-        post :create,question_id: q, answer: FactoryGirl.attributes_for(:answer)
+        post :create,question_id: q, answer: attributes_for(:answer)
         expect(response).to redirect_to q
       end
 
     end
     context "when unsaved" do
       it 'does not save an answer to DB' do
-        expect {post :create, question_id: q, answer: FactoryGirl.attributes_for(:invalid_answer)}.to_not change(Answer, :count)
+        expect {post :create, question_id: q, answer: attributes_for(:invalid_answer)}.to_not change(Answer, :count)
       end
       it 'renders new view' do
-        post :create, question_id: q, answer: FactoryGirl.attributes_for(:invalid_answer)
+        post :create, question_id: q, answer: attributes_for(:invalid_answer)
         expect(response).to render_template :new
       end
     end
