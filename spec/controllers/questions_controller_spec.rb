@@ -137,13 +137,15 @@ RSpec.describe QuestionsController, type: :controller do
       end
       context "when unsaved" do
         before do
+          @old_title = q.title
+          @old_body = q.body
           patch :update, id: q, question: {title: "", body: ""}
           q.reload
         end
 
         it 'does not update question in DB' do
-          expect(q.title).to eq FactoryGirl.attributes_for(:question)[:title]
-          expect(q.body).to eq FactoryGirl.attributes_for(:question)[:body]
+          expect(q.title).to eq @old_title
+          expect(q.body).to eq @old_body
         end
 
         it 'renders edit view' do
