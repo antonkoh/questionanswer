@@ -4,7 +4,11 @@ RSpec.describe AnswersController, type: :controller do
   let (:q) {create(:question)}
 
   describe "GET #new" do
-    before {get :new, question_id: q}
+    before do
+      user = create(:user)
+      sign_in user
+      get :new, question_id: q
+    end
 
     it 'initializes a new answer' do
       expect(assigns(:answer)).to be_a_new(Answer)
@@ -16,7 +20,10 @@ RSpec.describe AnswersController, type: :controller do
   end
 
   describe "POST #create" do
-
+    before do
+      user = create(:user)
+      sign_in user
+    end
 
     it 'loads a question' do
       post :create,question_id: q, answer: attributes_for(:answer)

@@ -25,7 +25,11 @@ RSpec.describe QuestionsController, type: :controller do
   end
 
   describe "GET #new" do
-    before {get :new}
+    before do
+      user = create(:user)
+      sign_in user
+      get :new
+    end
     it 'initializes a new question' do
       expect(assigns(:question)).to be_a_new(Question)
     end
@@ -36,7 +40,11 @@ RSpec.describe QuestionsController, type: :controller do
   end
 
   describe "GET #edit" do
-    before {get :edit, id: q}
+    before do
+      user = create(:user)
+      sign_in user
+      get :edit, id: q
+    end
     it 'loads a question' do
       expect(assigns(:question)).to eq q
     end
@@ -47,6 +55,11 @@ RSpec.describe QuestionsController, type: :controller do
   end
 
   describe "POST #create" do
+    before do
+      user = create(:user)
+      sign_in user
+    end
+
     context "when saved successfully" do
       it 'creates new question in DB' do
         expect {post :create, question: FactoryGirl.attributes_for(:question)}.to change(Question, :count).by(1)
@@ -71,6 +84,11 @@ RSpec.describe QuestionsController, type: :controller do
 
 
   describe "PATCH #update" do
+    before do
+      user = create(:user)
+      sign_in user
+    end
+
     context "when saved successfully" do
       before do
         patch :update, id: q, question: {title: "New title", body: "New body"}
@@ -105,7 +123,11 @@ RSpec.describe QuestionsController, type: :controller do
   end
 
   describe "DELETE #destroy" do
-    before {q}
+    before do
+      q
+      user = create(:user)
+      sign_in user
+    end
     it 'removes question from DB' do
       expect{delete :destroy, id: q}. to change(Question, :count).by(-1)
     end
