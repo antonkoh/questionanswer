@@ -2,11 +2,13 @@ require 'rails_helper'
 
 RSpec.describe AnswersController, type: :controller do
   let (:q) {create(:question)}
+  let(:user) {create(:user)}
+
+
 
   describe "GET #new" do
     before do
-      user = create(:user)
-      sign_in user
+      login(user)
       get :new, question_id: q
     end
 
@@ -20,11 +22,7 @@ RSpec.describe AnswersController, type: :controller do
   end
 
   describe "POST #create" do
-    before do
-      user = create(:user)
-      sign_in user
-    end
-
+    before {login(user)}
     it 'loads a question' do
       post :create,question_id: q, answer: attributes_for(:answer)
       expect(assigns(:question)).to eq q
