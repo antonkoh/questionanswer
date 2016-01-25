@@ -9,10 +9,7 @@ feature 'Create question', %q{
   given!(:user) {create(:user)}
 
   scenario 'An authorized user creates a question' do
-    visit new_user_session_path
-    fill_in 'Email', with: user.email
-    fill_in 'Password', with: user.password
-    click_on 'Log in'
+    login(user)
     visit questions_path
     click_on 'Ask question'
 
