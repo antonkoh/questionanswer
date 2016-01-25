@@ -9,3 +9,8 @@
     <%= f.text_field :body %>
     <%= f.submit "Post answer" %>
 <% end %>
+
+<% if user_signed_in? && current_user.can_edit?(@question) %>
+<h3>Actions:</h3>
+<%= link_to 'Delete question', @question, method: :delete %>
+<% end %>

@@ -6,4 +6,8 @@ class User < ActiveRecord::Base
 
   has_many :questions
   has_many :answers
+
+  def can_edit?(object)
+    object.user_id == self.id
+  end
 end
