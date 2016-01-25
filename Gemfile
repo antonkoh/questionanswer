@@ -5,7 +5,7 @@ ruby "2.2.1"
 gem 'rails', '4.2.4'
 # Use sqlite3 as the database for Active Record
 gem 'pg'
-gem 'rails_12factor'
+gem 'rails_12factor', group: :production
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 5.0'
 # Use Uglifier as compressor for JavaScript assets
@@ -36,6 +36,7 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug'
+  gem 'rspec-rails', '~> 3.0'
 end
 
 group :development do
@@ -46,3 +47,7 @@ group :development do
   gem 'spring'
 end
 
+group :test do
+  gem 'shoulda-matchers', '~> 3.0'
+  gem 'factory_girl_rails'
+end
