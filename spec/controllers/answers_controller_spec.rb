@@ -22,31 +22,42 @@ RSpec.describe AnswersController, type: :controller do
   end
 
   describe "POST #create" do
-    before {login(user)}
-    it 'loads a question' do
-      post :create,question_id: q, answer: attributes_for(:answer)
-      expect(assigns(:question)).to eq q
-    end
+    context "user signed in" do
 
-    context "when saved successfully" do
-      it 'creates new answer in DB for the given question' do
-        expect {post :create, question_id: q, answer: attributes_for(:answer)}.to change(q.answers, :count).by(1)
-      end
-      it 'redirects to show view for question' do
+      before {login(user)}
+      it 'loads a question' do
         post :create,question_id: q, answer: attributes_for(:answer)
-        expect(response).to redirect_to q
+        expect(assigns(:question)).to eq q
       end
 
-    end
-    context "when unsaved" do
-      it 'does not save an answer to DB' do
-        expect {post :create, question_id: q, answer: attributes_for(:invalid_answer)}.to_not change(Answer, :count)
+      context "when saved successfully" do
+        it 'creates new answer in DB for the given question' do
+          expect {post :create, question_id: q, answer: attributes_for(:answer)}.to change(q.answers, :count).by(1)
+        end
+        it 'redirects to show view for question' do
+          post :create,question_id: q, answer: attributes_for(:answer)
+          expect(response).to redirect_to q
+        end
+
       end
-      it 'renders new view' do
-        post :create, question_id: q, answer: attributes_for(:invalid_answer)
-        expect(response).to render_template :new
+      context "when unsaved" do
+        it 'does not save an answer to DB' do
+          expect {post :create, question_id: q, answer: attributes_for(:invalid_answer)}.to_not change(Answer, :count)
+        end
+        it 'renders new view' do
+          post :create, question_id: q, answer: attributes_for(:invalid_answer)
+          expect(response).to render_template :new
+        end
       end
     end
+
+    context "unauthorized user" do
+      it 'redirects to sign in form' do
+        post :create, question_id: q
+        expect(response).to redirect_to new_user_session_path
+      end
+    end
+
   end
 
 end
