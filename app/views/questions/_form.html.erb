@@ -1,0 +1,8 @@
+
+<%= form_for question do |f| %>
+    <%= f.label :title %>
+    <%= f.text_field :title %>
+    <%= f.label :body, 'Text' %>
+    <%= f.text_field :body %>
+    <%= f.submit (question.new_record? ? 'Create' : 'Save') %>
+<% end %>
