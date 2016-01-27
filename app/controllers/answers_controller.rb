@@ -1,7 +1,7 @@
 class AnswersController < ApplicationController
-  before_action :authenticate_user!, only: [:new, :create, :update, :edit]
-  before_action :load_answer, only: [:edit, :update]
-  before_action :check_edit_rights, only: [:edit, :update]
+  before_action :authenticate_user!, only: [:new, :create, :update, :edit, :destroy]
+  before_action :load_answer, only: [:edit, :update, :destroy]
+  before_action :check_edit_rights, only: [:edit, :update, :destroy]
 
   def new
     @answer = Answer.new
@@ -27,6 +27,11 @@ class AnswersController < ApplicationController
     else
       render :edit
     end
+  end
+
+  def destroy
+    @answer.destroy
+    redirect_to @answer.question
   end
 
 

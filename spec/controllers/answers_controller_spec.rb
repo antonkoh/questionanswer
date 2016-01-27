@@ -171,4 +171,49 @@ RSpec.describe AnswersController, type: :controller do
 
   end
 
+  describe "DELETE #destroy" do
+    context "guest" do
+      it 'redirects to sign in form' do
+        delete :destroy, id: a
+        expect(response).to redirect_to new_user_session_path
+      end
+    end
+
+    context "author" do
+      before do
+        login(user)
+        a
+      end
+      it 'removes question from DB' do
+        expect{delete :destroy, id: a}.to change(Answer, :count).by(-1)
+      end
+
+      it 'redirects to index' do
+        delete :destroy, id: a
+        expect(response).to redirect_to a.question
+      end
+    end
+
+    context "not author" do
+      before do
+        login(other_user)
+        a
+      end
+
+      it 'does not remove a question from DB' do
+        expect{delete :destroy, id: a}.to_not change(Answer, :count)
+      end
+
+      it 'refreshes the form' do
+        delete :destroy, id: a
+        expect(response).to redirect_to q
+      end
+
+      it 'includes a flash notice' do
+        delete :destroy, id: a
+        expect(flash[:notice]).to eq 'You don\'t have rights to perform this action.'
+      end
+    end
+  end
+
 end

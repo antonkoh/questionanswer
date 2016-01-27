@@ -1,5 +1,6 @@
 <p><%= answer.body %></p>
 <% if user_signed_in? && current_user.can_edit?(answer) %>
-  <em><%= link_to 'Edit answer', edit_answer_path(answer) %></em>
+  <p><em><%= link_to 'Edit answer', edit_answer_path(answer) %></em></p>
+  <p><em><%= link_to 'Delete answer', answer, method: :delete %></em></p>
 <% end %>
 <br><br>
