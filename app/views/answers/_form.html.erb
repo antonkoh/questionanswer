@@ -1,5 +1,9 @@
-<%= form_for (answer.new_record? ? [@question, @answer] : @answer ) do |f| %>
+<div class='answer-errors'></div>
+
+<%= form_for (answer.new_record? ? [@question, @answer] : @answer ), remote: (answer.new_record?) do |f| %>
     <%= f.label :body, 'Your answer:' %>
     <%= f.text_field :body %>
     <%= f.submit (answer.new_record? ? "Post answer" : "Save") %>
 <% end %>
+
+

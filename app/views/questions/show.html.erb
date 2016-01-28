@@ -2,9 +2,13 @@
 <p><%= @question.body %></p>
 
 <h2>Answers</h2>
-<%= render @question.answers %>
+<div class="answers">
+  <%= render @question.answers %>
+</div>
+
 
 <%= render 'answers/form', question: @question, answer: @answer %>
+
 
 <% if user_signed_in? && current_user.can_edit?(@question) %>
 <h3>Actions:</h3>

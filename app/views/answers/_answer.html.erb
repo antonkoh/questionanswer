@@ -1,6 +1,8 @@
-<p><%= answer.body %></p>
-<% if user_signed_in? && current_user.can_edit?(answer) %>
-  <p><em><%= link_to 'Edit answer', edit_answer_path(answer) %></em></p>
-  <p><em><%= link_to 'Delete answer', answer, method: :delete %></em></p>
+<%= div_for answer do |answer| %>
+  <p><%= answer.body %></p>
+  <% if user_signed_in? && current_user.can_edit?(answer) %>
+    <p><em><%= link_to 'Edit answer', edit_answer_path(answer) %></em></p>
+    <p><em><%= link_to 'Delete answer', answer, method: :delete, remote: true %></em></p>
+  <% end %>
 <% end %>
 <br><br>

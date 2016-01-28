@@ -1,21 +1,25 @@
 class AnswersController < ApplicationController
-  before_action :authenticate_user!, only: [:new, :create, :update, :edit, :destroy]
+  before_action :authenticate_user!, only: [:update, :edit, :destroy]
   before_action :load_answer, only: [:edit, :update, :destroy]
-  before_action :check_edit_rights, only: [:edit, :update, :destroy]
+  before_action :check_edit_rights, only: [:edit, :update]
 
-  def new
-    @answer = Answer.new
-  end
+
 
   def create
     @question = Question.find(params[:question_id])
     @answer = @question.answers.new(answer_params)
     @answer.user = current_user
-    if @answer.save
-      redirect_to @question
-    else
-      render :new
+    @signed_in = false
+    if user_signed_in?
+       @answer.save
+      @signed_in = true
     end
+    # if @answer.save
+    #   redirect_to @question
+    # else
+    #   @question.reload
+    #   render 'questions/show'
+    # end
   end
 
   def edit
@@ -30,8 +34,11 @@ class AnswersController < ApplicationController
   end
 
   def destroy
-    @answer.destroy
-    redirect_to @answer.question
+    @has_rights = false
+    if user_signed_in? && current_user.can_edit?(@answer)
+      @has_rights = true
+      @answer.destroy
+    end
   end
 
 

@@ -11,7 +11,7 @@ feature 'Edit answer', %q{
   given!(:question) {create(:question)}
   given!(:answer) {create(:answer, user: user1, question: question)}
 
-  scenario 'An authorized user deletes own answer' do
+  scenario 'An authorized user deletes own answer', js:true do
     login(user1)
     visit question_path(question)
     click_on 'Delete answer'
@@ -19,12 +19,12 @@ feature 'Edit answer', %q{
     expect(page).to_not have_content answer.body
   end
 
-  scenario 'An unauthorized user tries to delete an answer' do
+  scenario 'An unauthorized user tries to delete an answer',js:true do
     visit question_path(question)
     expect(page).to_not have_content 'Delete answer'
   end
 
-  scenario 'An authorized user tries to delete not own answer' do
+  scenario 'An authorized user tries to delete not own answer',js:true do
     login(user2)
     visit question_path(question)
     expect(page).to_not have_content 'Delete answer'
