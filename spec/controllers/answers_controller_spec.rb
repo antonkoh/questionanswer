@@ -97,36 +97,42 @@ RSpec.describe AnswersController, type: :controller do
 
         it 'updates answer in DB' do
           @new_answer = attributes_for(:answer)
-          patch :update, id:a, answer: @new_answer
+          patch :update, id:a, answer: @new_answer, format: :js
           a.reload
           expect(a.body).to eq @new_answer[:body]
         end
 
-        it 'redirects to show view for question' do
-          patch :update, id:a, answer: attributes_for(:answer)
-          expect(response).to redirect_to a.question
-        end
+        # it 'redirects to show view for question' do
+        #   patch :update, id:a, answer: attributes_for(:answer)
+        #   expect(response).to redirect_to a.question
+        # end
       end
 
       context "when unsaved" do
-
-        it 'renders edit view' do
-          patch :update, id: a, answer: {body: ""}
-          expect(response).to render_template :edit
+        it 'does not update answer' do
+          @old_body = a.body
+          patch :update, id:a, answer: {body: ""}, format: :js
+          a.reload
+          expect(a.body).to eq @old_body
         end
+
+        # it 'renders edit view' do
+        #   patch :update, id: a, answer: {body: ""}
+        #   expect(response).to render_template :edit
+        # end
       end
     end
 
     context "unauthorized user" do
 
-      it 'redirects to sign in form' do
-        patch :update, id:a, answer: attributes_for(:answer)
-        expect(response).to redirect_to new_user_session_path
-      end
+      # it 'redirects to sign in form' do
+      #   patch :update, id:a, answer: attributes_for(:answer)
+      #   expect(response).to redirect_to new_user_session_path
+      # end
 
       it 'does not update answer' do
         @new_answer = attributes_for(:answer)
-        patch :update, id:a, answer: @new_answer
+        patch :update, id:a, answer: @new_answer, format: :js
         a.reload
         expect(a.body).to_not eq @new_answer[:body]
       end
@@ -138,16 +144,16 @@ RSpec.describe AnswersController, type: :controller do
       before do
         @current_answer = a
         login(other_user)
-        patch :update, id: a, answer: attributes_for(:answer)
+        patch :update, id: a, answer: attributes_for(:answer), format: :js
       end
 
-      it 'refreshes the question form' do
-        expect(response).to redirect_to q
-      end
-
-      it 'includes a flash notice' do
-        expect(flash[:notice]).to eq 'You don\'t have rights to perform this action.'
-      end
+      # it 'refreshes the question form' do
+      #   expect(response).to redirect_to q
+      # end
+      #
+      # it 'includes a flash notice' do
+      #   expect(flash[:notice]).to eq 'You don\'t have rights to perform this action.'
+      # end
 
       it 'does not update answer' do
         expect(a).to eq @current_answer

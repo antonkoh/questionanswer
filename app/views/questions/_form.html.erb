@@ -1,5 +1,13 @@
+<div class='question-errors'>
+  <ul>
+    <% question.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+    <% end %>
+  </ul>
+</div>
 
-<%= form_for question do |f| %>
+
+<%= form_for question, remote: (!question.new_record?) do |f| %>
     <%= f.label :title %>
     <%= f.text_field :title %>
     <%= f.label :body, 'Text' %>

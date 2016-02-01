@@ -8,5 +8,6 @@ $('answer-errors').empty();
   $('.answer-errors').append('<%= j I18n.t('devise.failure.unauthenticated') %>');
 <% elsif @answer.errors.empty? %>
   $('.answers').append('<%= j render @answer %>');
+  $('.new_answer input#answer_body').val("");
 <% end %>
 
