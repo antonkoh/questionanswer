@@ -1,8 +1,55 @@
 require 'rails_helper'
 
 RSpec.describe QuestionsController, type: :controller do
-  let (:q) {create(:question)}
   let (:user) {create(:user)}
+  let (:other_user) {create(:user)}
+  let (:q) {create(:question, user: user)}
+
+
+  describe "DELETE #destroy" do
+    context "guest" do
+      it 'redirects to sign in form' do
+       delete :destroy, id: q
+       expect(response).to redirect_to new_user_session_path
+      end
+    end
+
+    context "author" do
+      before do
+        login(user)
+        q
+      end
+      it 'removes question from DB' do
+        expect{delete :destroy, id: q}.to change(Question, :count).by(-1)
+      end
+
+      it 'redirects to index' do
+        delete :destroy, id: q
+        expect(response).to redirect_to questions_path
+      end
+    end
+
+    context "not author" do
+      before do
+        login(other_user)
+        q
+      end
+
+      it 'does not remove a question from DB' do
+        expect{delete :destroy, id: q}.to_not change(Question, :count)
+      end
+
+      it 'refreshes the form' do
+        delete :destroy, id: q
+        expect(response).to redirect_to q
+      end
+
+      it 'includes a flash notice' do
+        delete :destroy, id: q
+        expect(flash[:notice]).to eq 'You don\'t have rights to perform this action.'
+      end
+    end
+  end
 
 
 
@@ -17,6 +64,7 @@ RSpec.describe QuestionsController, type: :controller do
     end
   end
 
+
   describe "GET #show" do
     before {get :show, id: q}
     it 'loads question from parameter' do
@@ -28,14 +76,14 @@ RSpec.describe QuestionsController, type: :controller do
   end
 
   describe "GET #new" do
-    context "unauthorized user" do
+    context "guest" do
       it 'redirects to sign in form' do
         get :new
         expect(response).to redirect_to new_user_session_path
       end
     end
 
-    context "authorized user" do
+    context "authorized" do
       before do
         login(user)
         get :new
@@ -51,14 +99,14 @@ RSpec.describe QuestionsController, type: :controller do
   end
 
   describe "GET #edit" do
-    context "unauthorized user" do
+    context "guest" do
       it 'redirects to sign in form' do
         get :edit, id: q
         expect(response).to redirect_to new_user_session_path
       end
     end
 
-    context "authorized user" do
+    context "author" do
       before do
         login(user)
         get :edit, id: q
@@ -71,10 +119,24 @@ RSpec.describe QuestionsController, type: :controller do
         expect(response).to render_template :edit
       end
     end
+
+    context "not author" do
+      before do
+        login(other_user)
+        get :edit, id: q
+      end
+      it 'refreshes the question page' do
+        expect(response).to redirect_to q
+      end
+
+      it 'includes a flash notice' do
+        expect(flash[:notice]).to eq 'You don\'t have rights to perform this action.'
+      end
+    end
   end
 
   describe "POST #create" do
-    context "unauthorized user" do
+    context "guest" do
       it 'redirects to sign in form' do
         post :create
         expect(response).to redirect_to new_user_session_path
@@ -82,12 +144,12 @@ RSpec.describe QuestionsController, type: :controller do
     end
 
 
-    context "authorized user" do
+    context "authorized" do
       before {login(user)}
 
       context "when saved successfully" do
-        it 'creates new question in DB' do
-          expect {post :create, question: FactoryGirl.attributes_for(:question)}.to change(Question, :count).by(1)
+        it 'creates new question in DB for the current user' do
+          expect {post :create, question: FactoryGirl.attributes_for(:question)}.to change(user.questions, :count).by(1)
         end
         it 'redirects to show view' do
           post :create, question: FactoryGirl.attributes_for(:question)
@@ -110,18 +172,46 @@ RSpec.describe QuestionsController, type: :controller do
 
 
   describe "PATCH #update" do
-    context "unauthorized user" do
-      it 'redirects to sign in form' do
-        patch :update, id: q
-        expect(response).to redirect_to new_user_session_path
+    context "guest" do
+      before do
+        @current_question = q
+        patch :update, id: q, question: attributes_for(:question), format: :js
+        q.reload
+      end
+      # it 'redirects to sign in form' do
+      #
+      #   expect(response).to redirect_to new_user_session_path
+      # end
+
+      it 'does not update answer' do
+        expect(q).to eq @current_question
       end
     end
 
-    context "authorized user" do
+    context "not author" do
+      before do
+        login(other_user)
+        @current_question = q
+        patch :update, id: q, question: attributes_for(:question), format: :js
+        q.reload
+      end
+      it 'does not update a question' do
+        expect(q).to eq @current_question
+      end
+      # it 'refreshes the form' do
+      #   expect(response).to redirect_to q
+      # end
+      #
+      # it 'includes a flash notice' do
+      #   expect(flash[:notice]).to eq 'You don\'t have rights to perform this action.'
+      # end
+    end
+
+    context "author" do
       before{login(user)}
       context "when saved successfully" do
         before do
-          patch :update, id: q, question: {title: "New title", body: "New body"}
+          patch :update, id: q, question: {title: "New title", body: "New body"}, format: :js
           q.reload
         end
 
@@ -130,16 +220,16 @@ RSpec.describe QuestionsController, type: :controller do
           expect(q.body).to eq "New body"
         end
 
-        it 'redirects to show view' do
-          expect(response).to redirect_to q
-        end
+        # it 'redirects to show view' do
+        #   expect(response).to redirect_to q
+        # end
 
       end
       context "when unsaved" do
         before do
           @old_title = q.title
           @old_body = q.body
-          patch :update, id: q, question: {title: "", body: ""}
+          patch :update, id: q, question: {title: "", body: ""}, format: :js
           q.reload
         end
 
@@ -148,36 +238,13 @@ RSpec.describe QuestionsController, type: :controller do
           expect(q.body).to eq @old_body
         end
 
-        it 'renders edit view' do
-          expect(response).to render_template :edit
-        end
+        # it 'renders edit view' do
+        #   expect(response).to render_template :edit
+        # end
       end
     end
   end
 
-  describe "DELETE #destroy" do
-    context "authorized user" do
-      before do
-        login(user)
-        q
-      end
-      it 'removes question from DB' do
-        expect{delete :destroy, id: q}. to change(Question, :count).by(-1)
-      end
-
-      it 'redirects to index' do
-        delete :destroy, id: q
-        expect(response).to redirect_to questions_path
-      end
-    end
-
-    context "unauthorized user" do
-      it 'redirects to sign in form' do
-        delete :destroy, id: q
-        expect(response).to redirect_to new_user_session_path
-      end
-    end
-  end
 
 
 end

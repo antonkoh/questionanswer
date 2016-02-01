@@ -9,7 +9,7 @@ feature 'Create answer', %q{
   given!(:user) {create(:user)}
   given!(:questions) {create_list(:question, 5)}
 
-  scenario 'An authorized user answers a question' do
+  scenario 'An authorized user answers a question', js:true do
     login(user)
     visit questions_path
     q = questions.sample
@@ -21,12 +21,24 @@ feature 'Create answer', %q{
 
   end
 
-  scenario 'An unauthorized user tries to answer a question' do
+  scenario 'An authorized user adds invalid answer', js:true do
+    login(user)
+    visit questions_path
+    q = questions.sample
+    click_on q.title
+    click_on "Post answer"
+    expect(page).to have_content 'Body can\'t be blank'
+
+  end
+
+  scenario 'An unauthorized user tries to answer a question', js:true do
     visit questions_path
     click_on questions.sample.title
+
+    expect(page).to_not have_content "Post answer"
     click_on "Post answer"
     expect(page).to have_content I18n.t('devise.failure.unauthenticated')
-    expect(current_path).to eq new_user_session_path
+    #expect(current_path).to eq new_user_session_path
   end
 end
 

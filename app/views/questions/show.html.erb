@@ -1,16 +1,30 @@
-<h1><%= @question.title %></h1>
-<p><%= @question.body %></p>
+<div class="read_question_section" id="content">
+  <h1><%= @question.title %></h1>
+  <p><%= @question.body %></p>
+</div>
+<div class="write_question_section hidden" >
+  <%= render 'form', question: @question %>
+
+  <%= link_to "Cancel", '#', id: 'cancel_edit_question_link' %>
+</div>
+
+<div class="read_question_section">
+  <% if user_signed_in? && current_user.can_edit?(@question) %>
+      <h3>Actions:</h3>
+      <ul>
+        <li><%= link_to 'Delete', @question, method: :delete %></li>
+        <li><%= link_to 'Edit', '#', id: 'edit_question_link' %></li>
+      </ul>
+  <% end %>
+</div>
 
 <h2>Answers</h2>
-<%= render @question.answers %>
+<div class="answers">
+  <%= render @question.answers %>
+</div>
 
-<%= form_for [@question, @answer] do |f| %>
-    <%= f.label :body, 'Your answer:' %>
-    <%= f.text_field :body %>
-    <%= f.submit "Post answer" %>
-<% end %>
+<div class="new_answer">
+  <%= render 'answers/form', question: @question, answer: @answer %>
+</div>
 
-<% if user_signed_in? && current_user.can_edit?(@question) %>
-<h3>Actions:</h3>
-<%= link_to 'Delete question', @question, method: :delete %>
-<% end %>
+
