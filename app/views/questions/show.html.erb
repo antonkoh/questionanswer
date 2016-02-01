@@ -1,0 +1,16 @@
+<h1><%= @question.title %></h1>
+<p><%= @question.body %></p>
+
+<h2>Answers</h2>
+<%= render @question.answers %>
+
+<%= form_for [@question, @answer] do |f| %>
+    <%= f.label :body, 'Your answer:' %>
+    <%= f.text_field :body %>
+    <%= f.submit "Post answer" %>
+<% end %>
+
+<% if user_signed_in? && current_user.can_edit?(@question) %>
+<h3>Actions:</h3>
+<%= link_to 'Delete question', @question, method: :delete %>
+<% end %>
