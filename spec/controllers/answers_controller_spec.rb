@@ -22,6 +22,11 @@ RSpec.describe AnswersController, type: :controller do
         it 'creates new answer in DB for the given question' do
           expect {post :create, question_id: q, answer: attributes_for(:answer), format: :js}.to change(q.answers, :count).by(1)
         end
+
+        it 'creates new answer in DB for the given user' do
+          expect {post :create, question_id: q, answer: attributes_for(:answer), format: :js}.to change(user.answers, :count).by(1)
+        end
+
         # it 'adds the answer to the page' do
         #   post :create,question_id: q, answer: attributes_for(:answer), format: :js
         #   expect(response).to render_template 'answer'

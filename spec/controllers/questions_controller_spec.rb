@@ -148,8 +148,8 @@ RSpec.describe QuestionsController, type: :controller do
       before {login(user)}
 
       context "when saved successfully" do
-        it 'creates new question in DB' do
-          expect {post :create, question: FactoryGirl.attributes_for(:question)}.to change(Question, :count).by(1)
+        it 'creates new question in DB for the current user' do
+          expect {post :create, question: FactoryGirl.attributes_for(:question)}.to change(user.questions, :count).by(1)
         end
         it 'redirects to show view' do
           post :create, question: FactoryGirl.attributes_for(:question)
