@@ -26,14 +26,31 @@ class AnswersController < ApplicationController
   end
 
   def update
-    @has_rights = false
-    @signed_in = false
-    if user_signed_in?
-       @signed_in = true
-       if current_user.can_edit?(@answer)
-         @has_rights = true
-         @answer.update(answer_params)
-       end
+    respond_to do |format|
+      format.js do
+        @has_rights = false
+        @signed_in = false
+        if user_signed_in?
+           @signed_in = true
+           if current_user.can_edit?(@answer)
+             @has_rights = true
+             @answer.update(answer_params)
+           end
+        end
+      end
+
+      format.json do
+        case
+          when !user_signed_in?
+            render json: {}, status: :unauthorized
+          when !current_user.can_edit?(@answer)
+            render json: {}, status: :forbidden
+          when @answer.update(answer_params)
+            render json: @answer
+          else
+            render json: @answer.errors.full_messages, status: :unprocessable_entity
+        end
+      end
     end
     # if @answer.update(answer_params)
     #   redirect_to @answer.question
