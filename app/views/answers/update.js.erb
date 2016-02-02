@@ -1,11 +1,11 @@
-$('answer-errors').empty();
+$('.answer-errors').empty();
 
 <% @answer.errors.full_messages.each do |message| %>
 $('.answer-errors').append('<%= j message %>');
 <% end %>
 
 <% if !@signed_in %>
-$('.answer_errors').append('<%= j I18n.t('devise.failure.unauthenticated') %>')
+$('.answer-errors').append('<%= j I18n.t('devise.failure.unauthenticated') %>')
 <% elsif !@has_rights %>
 $('.answer-errors').append('<%= j 'You don\'t have rights to perform this action.' %>');
 <% elsif @answer.errors.empty? %>
