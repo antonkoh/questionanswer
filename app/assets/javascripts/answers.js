@@ -30,4 +30,25 @@ $(document).ready(function() {
     $('.answers').on('click', 'a.cancel_edit_answer_link', function() {
         answerReadMode();
     });
+
+    $('form.edit_answer').bind('ajax:before', function () {
+        $('.answer-errors').empty();
+    }).bind('ajax:success', function(event, data, status, xhr) {
+        answer = $.parseJSON(xhr.responseText);
+        $('.answer.read_answer_section#answer_' + answer.id).children().first().replaceWith("<p>" + answer.body + "</p>");
+        answerReadMode();
+    }).bind('ajax:error', function(event,xhr,status,error) {
+        if (error == 'Unprocessable Entity') {
+            errors = $.parseJSON(xhr.responseText);
+            $.each(errors, function(index,value){
+                $('.answer-errors').append("<p>"+value+"</p>");
+            });
+        };
+        if (error == 'Forbidden') {
+            $('.answer-errors').append("<p>You don't have rights to perform this action.</p>");
+        };
+        if (error == 'Unauthorized') {
+            $('.answer-errors').append("<p>You need to sign in or sign up before continuing.</p>");
+        };
+    });
 });

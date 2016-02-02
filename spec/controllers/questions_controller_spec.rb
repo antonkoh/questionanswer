@@ -175,7 +175,7 @@ RSpec.describe QuestionsController, type: :controller do
     context "guest" do
       before do
         @current_question = q
-        patch :update, id: q, question: attributes_for(:question), format: :js
+        patch :update, id: q, question: attributes_for(:question), format: :json
         q.reload
       end
       # it 'redirects to sign in form' do
@@ -192,7 +192,7 @@ RSpec.describe QuestionsController, type: :controller do
       before do
         login(other_user)
         @current_question = q
-        patch :update, id: q, question: attributes_for(:question), format: :js
+        patch :update, id: q, question: attributes_for(:question), format: :json
         q.reload
       end
       it 'does not update a question' do
@@ -211,7 +211,7 @@ RSpec.describe QuestionsController, type: :controller do
       before{login(user)}
       context "when saved successfully" do
         before do
-          patch :update, id: q, question: {title: "New title", body: "New body"}, format: :js
+          patch :update, id: q, question: {title: "New title", body: "New body"}, format: :json
           q.reload
         end
 
@@ -229,7 +229,7 @@ RSpec.describe QuestionsController, type: :controller do
         before do
           @old_title = q.title
           @old_body = q.body
-          patch :update, id: q, question: {title: "", body: ""}, format: :js
+          patch :update, id: q, question: {title: "", body: ""}, format: :json
           q.reload
         end
 

@@ -102,7 +102,7 @@ RSpec.describe AnswersController, type: :controller do
 
         it 'updates answer in DB' do
           @new_answer = attributes_for(:answer)
-          patch :update, id:a, answer: @new_answer, format: :js
+          patch :update, id:a, answer: @new_answer, format: :json
           a.reload
           expect(a.body).to eq @new_answer[:body]
         end
@@ -116,7 +116,7 @@ RSpec.describe AnswersController, type: :controller do
       context "when unsaved" do
         it 'does not update answer' do
           @old_body = a.body
-          patch :update, id:a, answer: {body: ""}, format: :js
+          patch :update, id:a, answer: {body: ""}, format: :json
           a.reload
           expect(a.body).to eq @old_body
         end
@@ -137,7 +137,7 @@ RSpec.describe AnswersController, type: :controller do
 
       it 'does not update answer' do
         @new_answer = attributes_for(:answer)
-        patch :update, id:a, answer: @new_answer, format: :js
+        patch :update, id:a, answer: @new_answer, format: :json
         a.reload
         expect(a.body).to_not eq @new_answer[:body]
       end
@@ -149,7 +149,7 @@ RSpec.describe AnswersController, type: :controller do
       before do
         @current_answer = a
         login(other_user)
-        patch :update, id: a, answer: attributes_for(:answer), format: :js
+        patch :update, id: a, answer: attributes_for(:answer), format: :json
       end
 
       # it 'refreshes the question form' do

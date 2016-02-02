@@ -1,0 +1,17 @@
+#content.read_question_section
+  h1= @question.title
+  p= @question.body
+.write_question_section.hidden
+  = render 'form', question: @question
+  = link_to "Cancel", '#', id: 'cancel_edit_question_link'
+.read_question_section
+  - if user_signed_in? && current_user.can_edit?(@question)
+    h3 Actions:
+    ul
+      li= link_to 'Delete', @question, method: :delete
+      li= link_to 'Edit', '#', id: 'edit_question_link'
+h2 Answers
+.answers
+  = render @question.answers
+.new_answer
+  = render 'answers/form', question: @question, answer: @answer
