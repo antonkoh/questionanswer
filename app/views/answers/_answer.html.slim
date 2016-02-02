@@ -1,0 +1,13 @@
+= div_for(answer, class: "read_answer_section") do |answer|
+  p= answer.body
+  - if user_signed_in? && current_user.can_edit?(answer)
+    p
+      em= link_to 'Edit answer', '#', class: 'edit_answer_link'
+    p
+      em= link_to 'Delete answer', answer, method: :delete, remote: true
+  = div_for(answer, class: "write_answer_section hidden") do |answer|
+    = render 'answers/form', answer: answer, question: answer.question
+    p
+      em= link_to 'Cancel', '#', class: 'cancel_edit_answer_link'
+br/
+br/

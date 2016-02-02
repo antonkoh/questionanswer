@@ -1,0 +1,10 @@
+.question-errors
+  ul
+    - question.errors.full_messages.each do |message|
+      li= message
+      = form_for question, remote: (!question.new_record?) do |f|
+      = f.label :title
+        = f.text_field :title
+        = f.label :body, 'Text'
+        = f.text_field :body
+        = f.submit (question.new_record? ? 'Create' : 'Save')

@@ -1,0 +1,8 @@
+.answer-errors
+  ul
+    - answer.errors.full_messages.each do |message|
+      li= message
+      = form_for (answer.new_record? ? [question, answer] : answer ), remote: true do |f|
+      = f.label :body, 'Your answer:'
+        = f.text_field :body
+        = f.submit (answer.new_record? ? "Post answer" : "Save")
