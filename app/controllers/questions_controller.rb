@@ -23,6 +23,7 @@ class QuestionsController < ApplicationController
     @question = Question.new(question_params)
     @question.user = current_user
     if @question.save
+      PrivatePub.publish_to "/questions", new_question: @question
       redirect_to @question, notice: 'Your question has been created'
     else
       render :new

@@ -1,5 +1,8 @@
 h1 Questions
-= render @questions
+.questions
+  = render @questions
 
 
 = link_to 'Ask question', new_question_path
+
+= subscribe_to "/questions"

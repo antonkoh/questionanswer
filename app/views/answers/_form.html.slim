@@ -1,7 +1,6 @@
 .answer-errors
-  ul
-    - answer.errors.full_messages.each do |message|
-      li= message
+  - answer.errors.full_messages.each do |message|
+    p= message
 
 = form_for (answer.new_record? ? [question, answer] : answer ), remote: true, format: (answer.new_record? ? :js : :json) do |f|
   = f.label :body, 'Your answer:'

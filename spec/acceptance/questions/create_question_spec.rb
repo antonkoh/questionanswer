@@ -24,6 +24,20 @@ feature 'Create question', %q{
 
   end
 
+  scenario 'An authorized user creates a question with invalid data' do
+    login(user)
+    visit questions_path
+    click_on 'Ask question'
+
+    fill_in 'Title', with: ''
+    fill_in 'Text', with: ''
+    click_on 'Create'
+
+    expect(page).to have_content 'Body can\'t be blank'
+    expect(page).to have_content 'Title can\'t be blank'
+
+  end
+
   scenario 'An unauthorized user tries to create a question' do
     visit questions_path
     click_on 'Ask question'

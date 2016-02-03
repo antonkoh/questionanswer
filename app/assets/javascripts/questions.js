@@ -27,18 +27,22 @@ $(document).ready(function() {
         $('.read_question_section#content').html('<h1>' + question.title+ "</h1><p>" + question.body + "</p>");
         questionReadMode();
     }).bind('ajax:error', function(event,xhr,status,error) {
-        if (error == 'Unprocessable Entity') {
+        if (xhr.status == 422) {
           errors = $.parseJSON(xhr.responseText);
           $.each(errors, function(index,value){
             $('.question-errors').append('<p>'+value+'</p>');
           });
         };
-        if (error == 'Forbidden') {
+        if (xhr.status == 403) {
           $('.question-errors').append("You don't have rights to perform this action.");
         };
-        if (error == 'Unauthorized') {
+        if (xhr.status == 401) {
           $('.question-errors').append("You need to sign in or sign up before continuing.");
         };
+    });
+
+    PrivatePub.subscribe("/questions", function(data, channel) {
+        $('.questions').append('<p><a href="/questions/' + data.new_question.id + '">' + data.new_question.title + '</a></p>');
     });
 });
 
