@@ -32,7 +32,6 @@ feature 'Edit question', %q{
     fill_in 'Text', with: ''
     click_on 'Save'
     expect(current_path).to eq question_path(question)
-
     expect(page).to have_content 'Body can\'t be blank'
     expect(page).to have_content 'Title can\'t be blank'
   end

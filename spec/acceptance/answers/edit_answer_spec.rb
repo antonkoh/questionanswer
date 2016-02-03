@@ -30,6 +30,7 @@ feature 'Edit answer', %q{
     fill_in 'Your answer:', with: ''
     click_on 'Save'
     expect(current_path).to eq question_path(question)
+    sleep(3)
     expect(page).to have_content 'Body can\'t be blank'
   end
 

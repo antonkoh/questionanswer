@@ -38,16 +38,16 @@ $(document).ready(function() {
         $('.answer.read_answer_section#answer_' + answer.id).children().first().replaceWith("<p>" + answer.body + "</p>");
         answerReadMode();
     }).bind('ajax:error', function(event,xhr,status,error) {
-        if (error == 'Unprocessable Entity') {
+        if (xhr.status == 422) {
             errors = $.parseJSON(xhr.responseText);
             $.each(errors, function(index,value){
                 $('.answer-errors').append("<p>"+value+"</p>");
             });
         };
-        if (error == 'Forbidden') {
+        if (xhr.status == 403) {
             $('.answer-errors').append("<p>You don't have rights to perform this action.</p>");
         };
-        if (error == 'Unauthorized') {
+        if (xhr.status == 401) {
             $('.answer-errors').append("<p>You need to sign in or sign up before continuing.</p>");
         };
     });

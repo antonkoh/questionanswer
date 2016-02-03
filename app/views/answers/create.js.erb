@@ -1,11 +1,11 @@
 $('answer-errors').empty();
 
 <% @answer.errors.full_messages.each do |message| %>
-  $('.answer-errors').append('<%= j message %>');
+  $('.answer-errors').append('<p><%= j message %></p>');
 <% end %>
 
 <% if !@signed_in %>
-  $('.answer-errors').append('<%= j I18n.t('devise.failure.unauthenticated') %>');
+  $('.answer-errors').append('<p><%= j I18n.t('devise.failure.unauthenticated') %></p>');
 <% elsif @answer.errors.empty? %>
   $('.answers').append('<%= j render @answer %>');
   $('.new_answer input#answer_body').val("");

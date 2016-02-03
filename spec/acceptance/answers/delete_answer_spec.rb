@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-feature 'Edit answer', %q{
+feature 'Delete answer', %q{
   As an authorized user
   I would like to delete my own answer
   To hide it from others.
