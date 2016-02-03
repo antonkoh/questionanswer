@@ -8,3 +8,8 @@
   = f.label :body, 'Text'
   = f.text_field :body
   = f.submit (question.new_record? ? 'Create' : 'Save')
+  - if question.new_record?
+    p Attachments
+    p= f.fields_for :attachments do |a|
+      = a.label :file
+      = a.file_field :file

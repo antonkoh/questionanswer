@@ -73,6 +73,10 @@ RSpec.describe QuestionsController, type: :controller do
     it 'renders show view' do
       expect(response).to render_template :show
     end
+
+    it 'initializes an attachment for this question' do #because editing is in JS
+      expect(assigns(:attachment)).to be_a_new(Attachment)
+    end
   end
 
   describe "GET #new" do
@@ -90,6 +94,10 @@ RSpec.describe QuestionsController, type: :controller do
       end
       it 'initializes a new question' do
         expect(assigns(:question)).to be_a_new(Question)
+      end
+
+      it 'initializes an attachment for new question' do
+        expect(assigns(:attachment)).to be_a_new(Attachment)
       end
 
       it 'renders new view' do
@@ -118,6 +126,7 @@ RSpec.describe QuestionsController, type: :controller do
       it 'renders edit view' do
         expect(response).to render_template :edit
       end
+
     end
 
     context "not author" do

@@ -1,6 +1,10 @@
 #content.read_question_section
   h1= @question.title
   p= @question.body
+  - @question.attachments.each do |a|
+    - unless a.new_record?
+      p= link_to a.file.filename, a.file.url
+
 .write_question_section.hidden
   = render 'form', question: @question
   = link_to "Cancel", '#', id: 'cancel_edit_question_link'
