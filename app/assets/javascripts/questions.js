@@ -40,5 +40,9 @@ $(document).ready(function() {
           $('.question-errors').append("You need to sign in or sign up before continuing.");
         };
     });
+
+    PrivatePub.subscribe("/questions", function(data, channel) {
+        $('.questions').append('<p><a href="/questions/' + data.new_question.id + '">' + data.new_question.title + '</a></p>');
+    });
 });
 
