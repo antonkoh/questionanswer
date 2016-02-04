@@ -11,6 +11,7 @@ class QuestionsController < ApplicationController
   def show
     @answer = Answer.new
     @attachment = @question.attachments.new
+    @answer_attachment = @answer.attachments.new
   end
 
   def new

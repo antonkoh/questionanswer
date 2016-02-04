@@ -5,4 +5,10 @@
 = form_for (answer.new_record? ? [question, answer] : answer ), remote: true, format: (answer.new_record? ? :js : :json) do |f|
   = f.label :body, 'Your answer:'
   = f.text_field :body
+  - if answer.new_record?
+    p Attachments
+    p= f.fields_for :attachments do |a|
+      = a.label :file
+      = a.file_field :file
   = f.submit (answer.new_record? ? "Post answer" : "Save")
+

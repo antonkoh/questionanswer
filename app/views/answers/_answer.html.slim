@@ -1,5 +1,9 @@
 = div_for(answer, class: "read_answer_section") do |answer|
   p= answer.body
+  - answer.attachments.each do |a|
+    - unless a.new_record?
+      p= link_to a.file.filename, a.file.url
+
   - if user_signed_in? && current_user.can_edit?(answer)
     p
       em= link_to 'Edit answer', '#', class: 'edit_answer_link'

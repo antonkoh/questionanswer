@@ -1,4 +1,4 @@
-$('answer-errors').empty();
+$('.answer-errors').empty();
 
 <% @answer.errors.full_messages.each do |message| %>
   $('.answer-errors').append('<p><%= j message %></p>');
@@ -10,6 +10,7 @@ $('answer-errors').empty();
   <% publish_to "/questions/#{@answer.question_id}/answers" do %>
     $('.answers').append('<%= j render @answer %>');
     $('.new_answer input#answer_body').val("");
+    $('.new_answer input[type="file"]').val("");
   <% end %>
 <% end %>
 
