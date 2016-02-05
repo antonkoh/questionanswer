@@ -7,4 +7,6 @@ Rails.application.routes.draw do
     resources :answers, shallow: true
   end
 
+  resources :attachments, only: [:destroy]
+
 end

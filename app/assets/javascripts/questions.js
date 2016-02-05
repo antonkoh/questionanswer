@@ -20,6 +20,7 @@ $(document).ready(function() {
       questionReadMode();
     });
 
+
     $('form.edit_question').bind('ajax:before', function () {
         $('.question-errors').empty();
     }).bind('ajax:success', function(event, data, status, xhr) {

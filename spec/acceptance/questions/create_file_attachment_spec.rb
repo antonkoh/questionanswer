@@ -7,7 +7,6 @@ feature 'Question with file', %q{
   } do
 
   given!(:user) {create(:user)}
-  given!(:question) {create(:question, user: user)}
 
   scenario 'An authorized user creates a question with file attached' do
     login(user)
