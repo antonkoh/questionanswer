@@ -2,6 +2,14 @@
   h1= @question.title
   p= @question.body
   = render @question.attachments
+  .question_comments_section
+    - unless @question.comments.empty?
+      strong Comments:
+      em
+        = render @question.comments
+    em
+      = link_to 'Add comment to question', new_question_comment_path(@question)
+
 
 .write_question_section.hidden
   = render 'form', question: @question

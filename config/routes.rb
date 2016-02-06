@@ -5,6 +5,11 @@ Rails.application.routes.draw do
 
   resources :questions do
     resources :answers, shallow: true
+    resources :comments, only: [:new, :create]
+  end
+
+  resources :answers, only: [] do
+    resources :comments, only: [:new, :create]
   end
 
   resources :attachments, only: [:destroy]

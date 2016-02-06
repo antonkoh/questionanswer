@@ -1,6 +1,13 @@
 = div_for(answer, class: "read_answer_section") do |answer|
   p= answer.body
   = render answer.attachments
+  .answer_comments_section
+    - unless answer.comments.empty?
+      strong Comments:
+      em
+        = render answer.comments
+    em
+      = link_to 'Add comment to answer', new_answer_comment_path(answer)
 
   - if user_signed_in? && current_user.can_edit?(answer)
     p

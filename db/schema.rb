@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160204194136) do
+ActiveRecord::Schema.define(version: 20160205223932) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -37,6 +37,16 @@ ActiveRecord::Schema.define(version: 20160204194136) do
 
   add_index "attachments", ["attachmentable_id"], name: "index_attachments_on_attachmentable_id", using: :btree
   add_index "attachments", ["attachmentable_type"], name: "index_attachments_on_attachmentable_type", using: :btree
+
+  create_table "comments", force: :cascade do |t|
+    t.text     "body"
+    t.integer  "commentable_id"
+    t.string   "commentable_type"
+    t.datetime "created_at",       null: false
+    t.datetime "updated_at",       null: false
+  end
+
+  add_index "comments", ["commentable_id"], name: "index_comments_on_commentable_id", using: :btree
 
   create_table "questions", force: :cascade do |t|
     t.string   "title"
