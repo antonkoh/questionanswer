@@ -16,11 +16,13 @@ feature 'Answer with file', %q{
 
   scenario 'An authorized user creates an answer with file attached', js:true do
     fill_in 'Your answer:', with: 'Test answer'
+    click_on 'Add file'
     attach_file 'File', "#{Rails.root}/spec/spec_helper.rb"
     click_on 'Post answer'
     expect(current_path).to eq question_path(question)
     expect(page).to have_link 'spec_helper.rb', 'http://localhost:3000/uploads/attachment/file/1/spec_helper.rb'
   end
+
 
 
 end

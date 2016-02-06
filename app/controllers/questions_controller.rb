@@ -29,6 +29,7 @@ class QuestionsController < ApplicationController
       PrivatePub.publish_to "/questions", new_question: @question
       redirect_to @question
     else
+      @question.attachments = [Attachment.new]
       render :new
     end
   end

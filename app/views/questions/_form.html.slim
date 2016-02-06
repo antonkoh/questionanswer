@@ -9,9 +9,10 @@
   = f.text_field :body
   - if question.new_record?
     p Attachments
-    p= f.fields_for :attachments do |a|
-      = a.label :file
-      = a.file_field :file
+    p
+      = f.fields_for :attachments do |a|
+        = link_to_add_association 'Add file', f, :attachments, partial: 'attachments/attachment_fields'
+
   = f.submit (question.new_record? ? 'Create' : 'Save')
 
 
