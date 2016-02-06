@@ -73,6 +73,20 @@ RSpec.describe QuestionsController, type: :controller do
     it 'renders show view' do
       expect(response).to render_template :show
     end
+
+    it 'initializes an answer for this question' do #because it is added on the same page
+      expect(assigns(:attachment)).to be_a_new(Attachment)
+    end
+
+    it 'initializes an attachment for a new answer of this question' do
+      expect(assigns(:answer_attachment)).to be_a_new(Attachment)
+    end
+
+    it 'initializes an attachment for this question' do #because editing is in JSON # not working
+      expect(assigns(:attachment)).to be_a_new(Attachment)
+    end
+
+
   end
 
   describe "GET #new" do
@@ -90,6 +104,10 @@ RSpec.describe QuestionsController, type: :controller do
       end
       it 'initializes a new question' do
         expect(assigns(:question)).to be_a_new(Question)
+      end
+
+      it 'initializes an attachment for new question' do
+        expect(assigns(:attachment)).to be_a_new(Attachment)
       end
 
       it 'renders new view' do
@@ -118,6 +136,7 @@ RSpec.describe QuestionsController, type: :controller do
       it 'renders edit view' do
         expect(response).to render_template :edit
       end
+
     end
 
     context "not author" do

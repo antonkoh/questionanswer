@@ -10,10 +10,13 @@ class QuestionsController < ApplicationController
 
   def show
     @answer = Answer.new
+    @attachment = @question.attachments.new
+    @answer_attachment = @answer.attachments.new
   end
 
   def new
     @question = Question.new
+    @attachment = @question.attachments.new
   end
 
   def edit
@@ -24,8 +27,9 @@ class QuestionsController < ApplicationController
     @question.user = current_user
     if @question.save
       PrivatePub.publish_to "/questions", new_question: @question
-      redirect_to @question, notice: 'Your question has been created'
+      redirect_to @question
     else
+      @question.attachments = [Attachment.new]
       render :new
     end
   end
@@ -76,7 +80,7 @@ class QuestionsController < ApplicationController
   end
 
   def question_params
-    params.require(:question).permit(:title, :body)
+    params.require(:question).permit(:title, :body, attachments_attributes: [:file])
   end
 
   def check_edit_rights

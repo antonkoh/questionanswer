@@ -1,0 +1,14 @@
+$('attachment-errors').empty();
+
+<% @attachment.errors.full_messages.each do |message| %>
+$('.attachment-errors').append('<%= j message %>');
+<% end %>
+
+<% if !@signed_in %>
+$('.attachment_errors').append('<%= j I18n.t('devise.failure.unauthenticated') %>')
+<% elsif !@has_rights %>
+$('.attachment-errors').append('<%= j 'You don\'t have rights to perform this action.' %>');
+<% elsif @attachment.errors.empty? %>
+$('<%= '.attachment#attachment_' + @attachment.id.to_s %>').remove();
+<% end %>
+

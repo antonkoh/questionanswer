@@ -1,0 +1,10 @@
+h1 New comment
+
+.comment-errors
+  - @comment.errors.full_messages.each do |message|
+    p= message
+
+= form_for [@comment.commentable,@comment] do |f|
+  = f.label :body, 'Your comment:'
+  = f.text_field :body
+  = f.submit 'Post comment'

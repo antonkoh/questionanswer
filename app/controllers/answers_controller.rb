@@ -1,5 +1,5 @@
 class AnswersController < ApplicationController
-  before_action :authenticate_user!, only: [:edit, :destroy]
+  before_action :authenticate_user!, only: [:edit]
   before_action :load_answer, only: [:edit, :update, :destroy]
   before_action :check_edit_rights, only: [:edit]
 
@@ -75,7 +75,7 @@ class AnswersController < ApplicationController
 
   private
   def answer_params
-    params.require(:answer).permit(:body,:question_id)
+    params.require(:answer).permit(:body,:question_id, attachments_attributes: [:file])
   end
 
   def load_answer
