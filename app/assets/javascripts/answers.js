@@ -44,11 +44,11 @@ $(document).ready(function() {
                 $('.answer-errors').append("<p>"+value+"</p>");
             });
         };
-        if (xhr.status == 403) {
-            $('.answer-errors').append("<p>You don't have rights to perform this action.</p>");
-        };
-        if (xhr.status == 401) {
-            $('.answer-errors').append("<p>You need to sign in or sign up before continuing.</p>");
-        };
+        //if (xhr.status == 403) {
+        //    $('.answer-errors').append("<p>You don't have rights to perform this action.</p>");
+        //};
+        //if (xhr.status == 401) {
+        //    $('.answer-errors').append("<p>You need to sign in or sign up before continuing.</p>");
+        //};
     });
 });

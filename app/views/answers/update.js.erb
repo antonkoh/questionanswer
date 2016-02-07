@@ -4,11 +4,7 @@ $('.answer-errors').empty();
 $('.answer-errors').append('<p><%= j message %></p>');
 <% end %>
 
-<% if !@signed_in %>
-$('.answer-errors').append('<p><%= j I18n.t('devise.failure.unauthenticated') %></p>')
-<% elsif !@has_rights %>
-$('.answer-errors').append('<p><%= j 'You don\'t have rights to perform this action.' %></p>');
-<% elsif @answer.errors.empty? %>
+<% if @answer.errors.empty? %>
   $(' <%= '.answer.read_answer_section#answer_' + @answer.id.to_s %>').children().first().replaceWith("<p><%= j @answer.body %></p>");
   answerReadMode();
 <% end %>

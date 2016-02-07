@@ -1,8 +1,9 @@
 class QuestionsController < ApplicationController
-  before_action :authenticate_user!, only: [:new, :edit, :create, :destroy]
+  before_action :authenticate_user!, only: [:new, :edit, :create, :destroy, :update]
   before_action :load_question, only: [:show, :edit, :update, :destroy]
-  before_action :check_edit_rights, only: [:edit, :destroy]
+ # before_action :check_edit_rights, only: [:edit, :destroy]
 
+  authorize_resource
 
   def index
     @questions = Question.all
@@ -83,10 +84,10 @@ class QuestionsController < ApplicationController
     params.require(:question).permit(:title, :body, attachments_attributes: [:file])
   end
 
-  def check_edit_rights
-    unless user_signed_in? && current_user.can_edit?(@question)
-      redirect_to @question, notice: 'You don\'t have rights to perform this action.'
-    end
-  end
+  # def check_edit_rights
+  #   unless user_signed_in? && current_user.can_edit?(@question)
+  #     redirect_to @question, notice: 'You don\'t have rights to perform this action.'
+  #   end
+  # end
 
 end

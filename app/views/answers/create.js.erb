@@ -4,9 +4,7 @@ $('.nested_attach_fields').remove();
   $('.answer-errors').append('<p><%= j message %></p>');
 <% end %>
 
-<% if !@signed_in %>
-  $('.answer-errors').append('<p><%= j I18n.t('devise.failure.unauthenticated') %></p>');
-<% elsif @answer.errors.empty? %>
+<% if @answer.errors.empty? %>
   <% publish_to "/questions/#{@answer.question_id}/answers" do %>
     $('.answers').append('<%= j render @answer %>');
     $('.new_answer input#answer_body').val("");

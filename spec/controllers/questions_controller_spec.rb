@@ -12,6 +12,9 @@ RSpec.describe QuestionsController, type: :controller do
        delete :destroy, id: q
        expect(response).to redirect_to new_user_session_path
       end
+
+
+
     end
 
     context "author" do
@@ -39,14 +42,14 @@ RSpec.describe QuestionsController, type: :controller do
         expect{delete :destroy, id: q}.to_not change(Question, :count)
       end
 
-      it 'refreshes the form' do
+      it 'redirect to root' do
         delete :destroy, id: q
-        expect(response).to redirect_to q
+        it_redirects_to_root
       end
 
       it 'includes a flash notice' do
         delete :destroy, id: q
-        expect(flash[:notice]).to eq 'You don\'t have rights to perform this action.'
+        expect(flash[:notice]).to eq I18n.t('unauthorized.default')
       end
     end
   end
@@ -144,12 +147,12 @@ RSpec.describe QuestionsController, type: :controller do
         login(other_user)
         get :edit, id: q
       end
-      it 'refreshes the question page' do
-        expect(response).to redirect_to q
+      it 'redirects to root' do
+        it_redirects_to_root
       end
 
       it 'includes a flash notice' do
-        expect(flash[:notice]).to eq 'You don\'t have rights to perform this action.'
+        it_includes_unauthorized_flash
       end
     end
   end
@@ -197,14 +200,11 @@ RSpec.describe QuestionsController, type: :controller do
         patch :update, id: q, question: attributes_for(:question), format: :json
         q.reload
       end
-      # it 'redirects to sign in form' do
-      #
-      #   expect(response).to redirect_to new_user_session_path
-      # end
 
-      it 'does not update answer' do
-        expect(q).to eq @current_question
-      end
+       it 'has 401 status' do
+         expect(response).to have_http_status(:unauthorized)
+       end
+
     end
 
     context "not author" do
@@ -217,13 +217,14 @@ RSpec.describe QuestionsController, type: :controller do
       it 'does not update a question' do
         expect(q).to eq @current_question
       end
-      # it 'refreshes the form' do
-      #   expect(response).to redirect_to q
-      # end
-      #
-      # it 'includes a flash notice' do
-      #   expect(flash[:notice]).to eq 'You don\'t have rights to perform this action.'
-      # end
+      it 'has 403 status' do
+        expect(response).to have_http_status(:forbidden)
+      end
+
+      it 'renders unauthorized in JSON' do
+        expect(JSON.parse(response.body)['error']).to eq I18n.t('unauthorized.default')
+      end
+
     end
 
     context "author" do
@@ -239,11 +240,9 @@ RSpec.describe QuestionsController, type: :controller do
           expect(q.body).to eq "New body"
         end
 
-        # it 'redirects to show view' do
-        #   expect(response).to redirect_to q
-        # end
-
+        it 'renders question in JSON'
       end
+
       context "when unsaved" do
         before do
           @old_title = q.title
@@ -257,9 +256,15 @@ RSpec.describe QuestionsController, type: :controller do
           expect(q.body).to eq @old_body
         end
 
-        # it 'renders edit view' do
-        #   expect(response).to render_template :edit
-        # end
+        it 'has 422 status' do
+            expect(response).to have_http_status(:unprocessable_entity)
+        end
+
+        it 'renders error in JSON' do
+          expect(JSON.parse(response.body).sort).to eq ["Body can't be blank", "Title can't be blank"].sort
+        end
+
+
       end
     end
   end

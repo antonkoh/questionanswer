@@ -34,12 +34,12 @@ $(document).ready(function() {
             $('.question-errors').append('<p>'+value+'</p>');
           });
         };
-        if (xhr.status == 403) {
-          $('.question-errors').append("You don't have rights to perform this action.");
-        };
-        if (xhr.status == 401) {
-          $('.question-errors').append("You need to sign in or sign up before continuing.");
-        };
+        //if (xhr.status == 403) {
+        //  $('.question-errors').append("You don't have rights to perform this action.");
+        //};
+        //if (xhr.status == 401) {
+        //  $('.question-errors').append("You need to sign in or sign up before continuing.");
+        //};
     });
 
     PrivatePub.subscribe("/questions", function(data, channel) {
