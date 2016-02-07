@@ -1,8 +1,9 @@
 class QuestionsController < ApplicationController
   before_action :authenticate_user!, only: [:new, :edit, :create, :destroy]
   before_action :load_question, only: [:show, :edit, :update, :destroy]
-  before_action :check_edit_rights, only: [:edit, :destroy]
+ # before_action :check_edit_rights, only: [:edit, :destroy]
 
+  authorize_resource
 
   def index
     @questions = Question.all
