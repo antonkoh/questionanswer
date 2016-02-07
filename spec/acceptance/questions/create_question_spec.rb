@@ -17,10 +17,23 @@ feature 'Create question', %q{
     fill_in 'Text', with: 'Body of question'
     click_on 'Create'
 
-    expect(page).to have_content 'Your question has been created'
     expect(page).to have_content 'Test question'
     expect(page).to have_content 'Body of question'
 
+
+  end
+
+  scenario 'An authorized user creates a question with invalid data' do
+    login(user)
+    visit questions_path
+    click_on 'Ask question'
+
+    fill_in 'Title', with: ''
+    fill_in 'Text', with: ''
+    click_on 'Create'
+
+    expect(page).to have_content 'Body can\'t be blank'
+    expect(page).to have_content 'Title can\'t be blank'
 
   end
 

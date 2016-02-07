@@ -1,0 +1,10 @@
+$('answer-errors').empty();
+
+<% @answer.errors.full_messages.each do |message| %>
+  $('.answer-errors').append('<%= j message %>');
+<% end %>
+
+<% if @answer.errors.empty? %>
+  $(' <%= '.answer#answer_' + @answer.id.to_s %>').remove();
+<% end %>
+

@@ -1,0 +1,34 @@
+#content.read_question_section
+  h1= @question.title
+  p= @question.body
+  = render @question.attachments
+  .question_comments_section
+    - unless @question.comments.empty?
+      strong Comments:
+      em
+        = render @question.comments
+    - if can?(:create, Comment)
+      em
+        = link_to 'Add comment to question', new_question_comment_path(@question)
+
+
+.write_question_section.hidden
+  = render 'form', question: @question
+  = link_to "Cancel", '#', id: 'cancel_edit_question_link'
+.read_question_section
+  - if can?(:update, @question) || can?(:destroy, @question)
+    h3 Actions:
+    ul
+      - if can?(:update, @question)
+        li= link_to 'Edit', '#', id: 'edit_question_link'
+      - if can?(:destroy, @question)
+        li= link_to 'Delete', @question, method: :delete
+
+h2 Answers
+.answers
+  = render @question.answers
+-if can?(:create, Answer)
+  .new_answer
+    = render 'answers/form', question: @question, answer: @answer
+
+= subscribe_to "/questions/#{@question.id}/answers"
