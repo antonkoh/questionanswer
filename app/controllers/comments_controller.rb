@@ -1,5 +1,8 @@
 class CommentsController < ApplicationController
+  before_action :authenticate_user!
   before_action :load_commentable
+
+  authorize_resource
 
   def new
     @comment = @commentable.comments.new

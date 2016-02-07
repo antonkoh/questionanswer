@@ -4,11 +4,7 @@ $('.question-errors').empty();
 $('.question-errors').append('<p><%= j message %></p>');
 <% end %>
 
-<% if !@signed_in %>
-$('.question-errors').append('<p><%= j I18n.t('devise.failure.unauthenticated') %></p>')
-<% elsif !@has_rights %>
-$('.question-errors').append('<p><%= j 'You don\'t have rights to perform this action.' %></p>');
-<% elsif @question.errors.empty? %>
+<% if @question.errors.empty? %>
 $('.read_question_section#content').html("<h1><%= @question.title %></h1><p><%= @question.body %></p>");
 questionReadMode();
 <% end %>

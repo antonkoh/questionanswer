@@ -35,9 +35,8 @@ feature 'Create answer', %q{
     visit questions_path
     click_on questions.sample.title
 
-    expect(page).to_not have_content "Post answer"
-    click_on "Post answer"
-    expect(page).to have_content I18n.t('devise.failure.unauthenticated')
+    expect(page).to_not have_button "Post answer"
+
     #expect(current_path).to eq new_user_session_path
   end
 end

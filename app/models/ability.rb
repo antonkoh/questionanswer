@@ -2,23 +2,32 @@ class Ability
   include CanCan::Ability
 
   def initialize(user)
+      @user = user
       if user
-        if user.admin?
-          can :manage, :all
-        else
-          can :read, Question
-          can :create, [Question, Answer, Comment]
-          can :destroy, [Question, Answer], user_id: user.id
-          can :update, [Question, Answer], user_id: user.id
-
-          can :destroy, Attachment do
-            self.attachmentable.user_id == user.id
-          end
-
-        end
-      else #guest
-        can :read, Question
+        user.admin? ? admin_abilities : non_admin_abilities
+      else
+          guest_abilities
       end
+  end
+
+  private
+  def guest_abilities
+    can :read, Question
+  end
+
+  def admin_abilities
+    can :manage, :all
+  end
+
+  def non_admin_abilities
+    can :read, Question
+    can :create, [Question, Answer, Comment]
+    can [:destroy, :update], [Question, Answer], user_id: @user.id
+
+    can :destroy, Attachment do |obj|
+      obj.attachmentable.user_id == @user.id
+    end
 
   end
+
 end
