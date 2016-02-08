@@ -1,0 +1,10 @@
+$('.answer-errors').empty();
+
+<% @answer.errors.full_messages.each do |message| %>
+$('.answer-errors').append('<p><%= j message %></p>');
+<% end %>
+
+<% if @answer.errors.empty? %>
+  $(' <%= '.answer.read_answer_section#answer_' + @answer.id.to_s %>').children().first().replaceWith("<p><%= j @answer.body %></p>");
+  answerReadMode();
+<% end %>

@@ -1,0 +1,10 @@
+$('attachment-errors').empty();
+
+<% @attachment.errors.full_messages.each do |message| %>
+$('.attachment-errors').append('<%= j message %>');
+<% end %>
+
+<% if @attachment.errors.empty? %>
+  $('<%= '.attachment#attachment_' + @attachment.id.to_s %>').remove();
+<% end %>
+

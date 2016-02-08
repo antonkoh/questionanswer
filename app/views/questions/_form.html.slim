@@ -1,0 +1,18 @@
+.question-errors
+  - question.errors.full_messages.each do |message|
+    p= message
+
+= form_for question, remote: (!question.new_record?), format: (question.new_record? ? :html : :json) do |f|
+  = f.label :title
+  = f.text_field :title
+  = f.label :body, 'Text'
+  = f.text_field :body
+  - if question.new_record?
+    p Attachments
+    p
+      = f.fields_for :attachments do |a|
+        = link_to_add_association 'Add file', f, :attachments, partial: 'attachments/attachment_fields'
+
+  = f.submit (question.new_record? ? 'Create' : 'Save')
+
+

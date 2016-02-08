@@ -1,0 +1,10 @@
+$('.question-errors').empty();
+
+<% @question.errors.full_messages.each do |message| %>
+$('.question-errors').append('<p><%= j message %></p>');
+<% end %>
+
+<% if @question.errors.empty? %>
+$('.read_question_section#content').html("<h1><%= @question.title %></h1><p><%= @question.body %></p>");
+questionReadMode();
+<% end %>

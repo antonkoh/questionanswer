@@ -13,20 +13,20 @@ feature 'Delete question', %q{
   scenario 'An authorized user deletes own question' do
     login(user1)
     visit question_path(question)
-    click_on 'Delete question'
+    click_on 'Delete'
     expect(current_path).to eq questions_path
     expect(page).to_not have_content question.title
   end
 
   scenario 'An unauthorized user tries to delete a question' do
     visit question_path(question)
-    expect(page).to_not have_content 'Delete question'
+    expect(page).to_not have_content 'Delete'
   end
 
   scenario 'An authorized user tries to delete not own question' do
     login(user2)
     visit question_path(question)
-    expect(page).to_not have_content 'Delete question'
+    expect(page).to_not have_content 'Delete'
   end
 end
 

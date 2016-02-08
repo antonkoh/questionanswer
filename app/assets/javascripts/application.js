@@ -12,5 +12,22 @@
 //
 //= require jquery
 //= require jquery_ujs
-//= require turbolinks
+//= require jquery.remotipart
+//= require cocoon
+//= require private_pub
+//= require twitter/bootstrap
 //= require_tree .
+
+$(document).ready(function() {
+    $(document).bind('ajax:error', function (event, xhr, status, error) {
+        if (xhr.status == 403) {
+            $('.alert').val("<%= I18n.t('unauthorized.default')%>");
+        }
+        ;
+        if (xhr.status == 401) {
+            $('.alert').val("<%= I18n.t('devise.failure.unauthenticated')%>");
+        }
+        ;
+    });
+});
+

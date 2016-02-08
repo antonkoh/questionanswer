@@ -1,0 +1,13 @@
+.answer-errors
+  - answer.errors.full_messages.each do |message|
+    p= message
+
+= form_for (answer.new_record? ? [question, answer] : answer ), remote: true, format: (answer.new_record? ? :js : :json) do |f|
+  = f.label :body, 'Your answer:'
+  = f.text_field :body
+  - if answer.new_record?
+    p Attachments
+    p= f.fields_for :attachments do |a|
+      = link_to_add_association 'Add file', f, :attachments, partial: 'attachments/attachment_fields'
+  = f.submit (answer.new_record? ? "Post answer" : "Save")
+

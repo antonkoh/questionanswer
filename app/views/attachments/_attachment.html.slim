@@ -1,0 +1,11 @@
+= div_for attachment
+  .attachment-errors
+    - attachment.errors.full_messages.each do |message|
+      p= message
+
+  - unless attachment.new_record?
+    p
+      = link_to attachment.file.filename, attachment.file.url
+      - if can?(:destroy,attachment)
+        = link_to 'Delete file', attachment, method: :delete, remote: true
+
