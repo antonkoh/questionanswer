@@ -28,6 +28,8 @@ class Ability
       obj.attachmentable.user_id == @user.id
     end
 
+    can :me, User, id: @user.id
+
   end
 
 end
