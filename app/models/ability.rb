@@ -29,6 +29,7 @@ class Ability
     end
 
     can :me, User, id: @user.id
+    can :others, User
 
   end
 
