@@ -20,7 +20,7 @@ class Ability
   end
 
   def non_admin_abilities
-    can :read, Question
+    can :read, [Question, Answer]
     can :create, [Question, Answer, Comment]
     can [:destroy, :update], [Question, Answer], user_id: @user.id
 

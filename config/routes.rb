@@ -22,7 +22,9 @@ Rails.application.routes.draw do
         get :others, on: :collection
       end
 
-      resources :questions
+      resources :questions do
+        resources :answers, shallow: true
+      end
     end
   end
 
