@@ -114,4 +114,72 @@ RSpec.describe "Questions API" do
 
 
   end
+
+  describe "POST /questions" do
+
+    let(:url) {'/api/v1/questions'}
+
+    context "unauthorized" do
+      it 'returns 401 status has no access token' do
+        post url, question: FactoryGirl.attributes_for(:question), format: :json
+        expect(response).to have_http_status(:unauthorized)
+      end
+
+      it 'returns 401 status has incorrect access token' do
+        post url, question: FactoryGirl.attributes_for(:question), options:{acces_token: '1234'}, format: :json
+        expect(response).to have_http_status(:unauthorized)
+      end
+    end
+
+
+
+    context "authorized" do
+      let(:me) {create(:user)}
+      let(:access_token) {create(:access_token, resource_owner_id: me.id)}
+
+
+
+      context "when saved successfully" do
+
+        it 'returns 200 status' do
+          post url, question: FactoryGirl.attributes_for(:question), access_token: access_token.token, format: :json
+          expect(response).to  have_http_status(:ok)
+        end
+
+
+        it 'creates new question in DB for the current user' do
+          expect {post url, question: FactoryGirl.attributes_for(:question), access_token: access_token.token, format: :json}.to change(me.questions, :count).by(1)
+        end
+
+
+
+
+        %w(id body title created_at updated_at).each do |attr|
+          it "question contains #{attr}" do
+            post url, question: FactoryGirl.attributes_for(:question), access_token: access_token.token, format: :json
+            expect(response.body).to be_json_eql(question.send(attr).to_json).at_path("question/#{attr}")
+          end
+        end
+
+
+      end
+
+      context "when unsaved" do
+        it 'does not save a question in DB' do
+          expect {post url, question: FactoryGirl.attributes_for(:invalid_question), access_token: access_token.token,format: :json}.to_not change(Question, :count)
+        end
+
+
+        it 'returns 422 status' do
+          post url,  question: FactoryGirl.attributes_for(:invalid_question), access_token: access_token.token,format: :json
+          expect(response).to have_http_status(:unprocessable_entity)
+        end
+
+        it 'renders errors' do
+          post url,  question: FactoryGirl.attributes_for(:invalid_question), access_token: access_token.token, format: :json
+          expect(response.body).to have_json_size(2).at_path("errors")
+        end
+      end
+    end
+  end
 end
