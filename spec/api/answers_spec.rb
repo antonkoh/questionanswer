@@ -7,17 +7,12 @@ RSpec.describe "Answers API" do
   let(:answer) {answers.first}
   let(:url) {"/api/v1/questions/#{question.id}/answers/"}
 
-    context "unauthorized" do
-      it 'returns 401 status has no access token' do
-        get url, format: :json
-        expect(response).to have_http_status(:unauthorized)
-      end
 
-      it 'returns 401 status has incorrect access token' do
-        get url, format: :json, acces_token: '1234'
-        expect(response).to have_http_status(:unauthorized)
-      end
-    end
+  it_behaves_like "API Authenticable" do
+    let(:method) {:get}
+  end
+
+
 
     context "authorized" do
       let(:access_token) {create(:access_token)}
@@ -54,16 +49,8 @@ RSpec.describe "Answers API" do
     let!(:attachments) {create_list(:attachment, 2, attachmentable_id: answer.id, attachmentable_type: 'Answer')}
     let!(:attachment) {attachments.first}
 
-    context "unauthorized" do
-      it 'returns 401 status has no access token' do
-        get url, format: :json
-        expect(response).to have_http_status(:unauthorized)
-      end
-
-      it 'returns 401 status has incorrect access token' do
-        get url, format: :json, acces_token: '1234'
-        expect(response).to have_http_status(:unauthorized)
-      end
+    it_behaves_like "API Authenticable" do
+      let(:method) {:get}
     end
 
     context "authorized" do

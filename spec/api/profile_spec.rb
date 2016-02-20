@@ -2,16 +2,10 @@ require 'rails_helper'
 
 RSpec.describe "Profiles API" do
   describe "GET /me" do
-    context "unauthorized" do
-      it 'returns 401 status has no access token' do
-        get '/api/v1/profiles/me', format: :json
-        expect(response).to have_http_status(:unauthorized)
-      end
 
-      it 'returns 401 status has incorrect access token' do
-        get '/api/v1/profiles/me', format: :json, acces_token: '1234'
-        expect(response).to have_http_status(:unauthorized)
-      end
+    let(:url) {'/api/v1/profiles/me'}
+    it_behaves_like "API Authenticable" do
+      let(:method) {:get}
     end
 
     context "authorized" do
@@ -44,17 +38,12 @@ RSpec.describe "Profiles API" do
 
 
   describe "GET /others" do
-    context "unauthorized" do
-      it 'returns 401 status if has no access token' do
-        get '/api/v1/profiles/others', format: :json
-        expect(response).to have_http_status(:unauthorized)
-      end
 
-      it 'returns 401 status if has incorrect access token' do
-        get '/api/v1/profiles/others', format: :json, acces_token: '1234'
-        expect(response).to have_http_status(:unauthorized)
-      end
+    let(:url) {'/api/v1/profiles/others'}
+    it_behaves_like "API Authenticable" do
+      let(:method) {:get}
     end
+
 
     context "authorized" do
       size = 2
