@@ -1,6 +1,9 @@
 class QuestionsController < ApplicationController
-  before_action :authenticate_user!, only: [:new, :edit, :create, :destroy, :update, :vote_up]
-  before_action :load_question, only: [:show, :edit, :update, :destroy, :vote_up]
+  include ControllerVotable
+
+
+  before_action :authenticate_user!, only: [:new, :edit, :create, :destroy, :update]
+  before_action :load_question, only: [:show, :edit, :update, :destroy]
  # before_action :check_edit_rights, only: [:edit, :destroy]
 
   authorize_resource
@@ -75,10 +78,8 @@ class QuestionsController < ApplicationController
     redirect_to questions_path
   end
 
-  def vote_up
-    @question.vote_up(current_user)
-    render nothing:true
-  end
+
+
 
   private
   def load_question

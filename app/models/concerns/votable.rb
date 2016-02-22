@@ -16,6 +16,11 @@ module Votable
     votes.sum(:value)
   end
 
+  def cancel_vote(user)
+    vote = votes.select{|vote| vote.user_id == user.id}
+    vote.destroy
+  end
+
   private
   def make_vote(user,value)
     votes.create(user:user, value:value)

@@ -13,6 +13,7 @@ class Ability
   private
   def guest_abilities
     can :read, Question
+    can :votes_sum, [Question, Answer]
   end
 
   def admin_abilities
@@ -30,7 +31,16 @@ class Ability
 
     can :me, User, id: @user.id
     can :others, User
-    can :vote_up, Question
+    can :votes_sum, [Question, Answer]
+
+    can [:vote_up, :vote_down], [Question, Answer] do |object|
+      object.user_id != @user.id && object.votes.select{|vote| vote.user_id == @user.id}.empty?
+    end
+
+    can :cancel_vote, [Question,Answer] do |object|
+      !object.votes.select{|vote| vote.user_id == @user.id}.empty?
+    end
+
 
   end
 

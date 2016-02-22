@@ -2,30 +2,27 @@ require 'rails_helper'
 
 RSpec.describe "Profiles API" do
   describe "GET /me" do
-
+    let(:method) {:get}
     let(:url) {'/api/v1/profiles/me'}
-    it_behaves_like "API Authenticable" do
-      let(:method) {:get}
-    end
+    it_behaves_like "API Authenticable"
 
     context "authorized" do
       let(:me) {create(:user)}
       let(:access_token) {create(:access_token, resource_owner_id: me.id)}
 
       before do
-        get '/api/v1/profiles/me', format: :json, access_token: access_token.token
+        do_request(method,url, access_token: access_token.token)
       end
 
-      it 'returns 200 status' do
-        expect(response).to have_http_status(:ok)
-      end
-
-
-      %w(id email created_at updated_at admin).each do |attr|
-        it "contains #{attr}" do
-          expect(response.body).to be_json_eql(me.send(attr).to_json).at_path(attr)
+      context 'profile contents' do
+        it_behaves_like "API Single Contents", 'id email created_at updated_at admin' do
+          let(:single) {me}
+          let(:substitute_single_name) {''}
         end
       end
+
+
+
 
       %w(password encrypted_password).each do |attr|
         it "does not contain #{attr}" do
@@ -38,8 +35,9 @@ RSpec.describe "Profiles API" do
 
 
   describe "GET /others" do
-
+    let(:method) {:get}
     let(:url) {'/api/v1/profiles/others'}
+
     it_behaves_like "API Authenticable" do
       let(:method) {:get}
     end
@@ -49,20 +47,19 @@ RSpec.describe "Profiles API" do
       size = 2
       let(:me) {create(:user)}
       let!(:others) {create_list(:user,size)}
-      let(:other) {others.first}
       let(:access_token) {create(:access_token, resource_owner_id: me.id)}
 
+
       before do
-        get '/api/v1/profiles/others', format: :json, access_token: access_token.token
+        do_request(method,url, access_token: access_token.token)
       end
 
-      it 'returns 200 status' do
-        expect(response).to have_http_status(:ok)
+      it_behaves_like "API List Contents", 'id email created_at updated_at admin', 'password encrypted_password' do
+        let(:substitute_contents_name) {'profiles'}
+        let(:contents) {others}
       end
 
-      it 'returns array of 2 users' do
-        expect(response.body).to have_json_size(2).at_path("profiles")
-      end
+
 
       (0..size-1).each do |index|
         it "does not contain current user at #{index}" do
@@ -71,17 +68,6 @@ RSpec.describe "Profiles API" do
       end
 
 
-      %w(id email created_at updated_at admin).each do |attr|
-        it "contains #{attr}" do
-          expect(response.body).to be_json_eql(other.send(attr).to_json).at_path("profiles/0/#{attr}")
-        end
-      end
-
-      %w(password encrypted_password).each do |attr|
-        it "does not contain #{attr}" do
-          expect(response.body).to_not have_json_path(attr)
-        end
-      end
     end
 
   end

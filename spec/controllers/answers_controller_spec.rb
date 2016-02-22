@@ -187,4 +187,13 @@ RSpec.describe AnswersController, type: :controller do
     end
   end
 
+  describe "answer votes" do
+
+    it_behaves_like "Votable Controller" do
+      let(:votable) {a}
+    end
+
+
+  end
+
 end

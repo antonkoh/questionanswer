@@ -178,6 +178,14 @@ RSpec.describe QuestionsController, type: :controller do
           expect(response).to redirect_to question_path(assigns(:question))
         end
 
+        it 'publishes message' do
+          q1 = create(:question)
+          allow(Question).to receive(:new) {q1}
+          expect(PrivatePub).to receive(:publish_to).with("/questions", new_question:q1)
+          post :create, question: FactoryGirl.attributes_for(:question)
+
+        end
+
       end
       context "when unsaved" do
         it 'does not save a question in DB' do
@@ -273,15 +281,13 @@ RSpec.describe QuestionsController, type: :controller do
     end
   end
 
-  describe "POST /vote_up" do
+  describe "question votes" do
 
-
-    it 'calls Question#vote_up method' do
-      login(user)
-      allow(Question).to receive(:find) {q}
-      expect(q).to receive(:vote_up).with(user)
-      post :vote_up, id: q
+    it_behaves_like "Votable Controller" do
+      let(:votable) {q}
     end
+
+
   end
 
 
