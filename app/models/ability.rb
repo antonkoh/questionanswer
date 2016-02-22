@@ -30,6 +30,7 @@ class Ability
 
     can :me, User, id: @user.id
     can :others, User
+    can :vote_up, Question
 
   end
 

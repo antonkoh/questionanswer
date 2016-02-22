@@ -1,6 +1,6 @@
 class QuestionsController < ApplicationController
-  before_action :authenticate_user!, only: [:new, :edit, :create, :destroy, :update]
-  before_action :load_question, only: [:show, :edit, :update, :destroy]
+  before_action :authenticate_user!, only: [:new, :edit, :create, :destroy, :update, :vote_up]
+  before_action :load_question, only: [:show, :edit, :update, :destroy, :vote_up]
  # before_action :check_edit_rights, only: [:edit, :destroy]
 
   authorize_resource
@@ -58,7 +58,7 @@ class QuestionsController < ApplicationController
           when @question.update(question_params)
             render json: @question
           else
-            render json: @question.errors.full_messages, status: :unprocessable_entity
+            render json: {errors: @question.errors.full_messages}, status: :unprocessable_entity
         end
       end
     end
@@ -73,6 +73,11 @@ class QuestionsController < ApplicationController
   def destroy
     @question.destroy
     redirect_to questions_path
+  end
+
+  def vote_up
+    @question.vote_up(current_user)
+    render nothing:true
   end
 
   private

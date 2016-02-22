@@ -32,7 +32,7 @@ class AnswersController < ApplicationController
           when @answer.update(answer_params)
             render json: @answer
           else
-            render json: @answer.errors.full_messages, status: :unprocessable_entity
+            render json: {errors: @answer.errors.full_messages}, status: :unprocessable_entity
         end
       end
     end

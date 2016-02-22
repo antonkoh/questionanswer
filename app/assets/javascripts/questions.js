@@ -24,7 +24,7 @@ $(document).ready(function() {
     $('form.edit_question').bind('ajax:before', function () {
         $('.question-errors').empty();
     }).bind('ajax:success', function(event, data, status, xhr) {
-        question = $.parseJSON(xhr.responseText);
+        question = $.parseJSON(xhr.responseText).question;
         $('.read_question_section#content').html('<h1>' + question.title+ "</h1><p>" + question.body + "</p>");
         questionReadMode();
     }).bind('ajax:error', function(event,xhr,status,error) {

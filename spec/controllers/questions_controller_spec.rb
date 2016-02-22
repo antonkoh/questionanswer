@@ -240,7 +240,11 @@ RSpec.describe QuestionsController, type: :controller do
           expect(q.body).to eq "New body"
         end
 
-        it 'renders question in JSON'
+        %w(id title body created_at updated_at).each do |attr|
+          it "renders question in JSON with #{attr}" do
+              expect(response.body).to be_json_eql(q.send(attr).to_json).at_path("question/#{attr}")
+          end
+        end
       end
 
       context "when unsaved" do
@@ -261,13 +265,25 @@ RSpec.describe QuestionsController, type: :controller do
         end
 
         it 'renders error in JSON' do
-          expect(JSON.parse(response.body).sort).to eq ["Body can't be blank", "Title can't be blank"].sort
+          expect(JSON.parse(response.body)["errors"].sort).to eq ["Body can't be blank", "Title can't be blank"].sort
         end
 
 
       end
     end
   end
+
+  describe "POST /vote_up" do
+
+
+    it 'calls Question#vote_up method' do
+      login(user)
+      allow(Question).to receive(:find) {q}
+      expect(q).to receive(:vote_up).with(user)
+      post :vote_up, id: q
+    end
+  end
+
 
 
 
