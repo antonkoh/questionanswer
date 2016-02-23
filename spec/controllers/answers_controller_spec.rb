@@ -70,9 +70,11 @@ RSpec.describe AnswersController, type: :controller do
           expect(a.body).to eq @new_answer[:body]
         end
 
-        it 'renders answer in JSON' #do
-          #expect(JSON.parse(response.body)).to eq a.attributes
-        #end
+        %w(id body created_at updated_at).each do |attr|
+          it "renders answer in JSON with #{attr}" do
+            expect(response.body).to be_json_eql(a.send(attr).to_json).at_path("answer/#{attr}")
+          end
+        end
 
 
       end
@@ -94,7 +96,7 @@ RSpec.describe AnswersController, type: :controller do
         end
 
         it 'returns errors in JSON' do
-          expect(JSON.parse(response.body)).to eq ["Body can't be blank"]
+          expect(JSON.parse(response.body)["errors"]).to eq ["Body can't be blank"]
         end
 
 
@@ -183,6 +185,15 @@ RSpec.describe AnswersController, type: :controller do
       end
 
     end
+  end
+
+  describe "answer votes" do
+
+    it_behaves_like "Votable Controller" do
+      let(:votable) {a}
+    end
+
+
   end
 
 end

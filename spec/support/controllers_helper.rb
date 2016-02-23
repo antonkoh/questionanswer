@@ -4,6 +4,8 @@ module ControllersHelper
     sign_in user
   end
 
+
+
   def it_redirects_to_root
     expect(response).to redirect_to root_path
   end

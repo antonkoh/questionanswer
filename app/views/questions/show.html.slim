@@ -23,6 +23,16 @@
         li= link_to 'Edit', '#', id: 'edit_question_link'
       - if can?(:destroy, @question)
         li= link_to 'Delete', @question, method: :delete
+      - if can?(:vote_up, @question)
+        p
+          em= link_to 'Upvote question', question_path(@question)+'/vote_up', method: :post, class: 'upvote_question_link', remote: true, format: :json
+      - if can?(:vote_down, @question)
+        p
+          em= link_to 'Downvote question', question_path(@question)+'/vote_down', method: :post, class: 'downvote_question_link', remote: true, format: :json
+      - if can?(:cancel_vote, @question)
+        p
+          em= link_to 'Cancel vote on question', question_path(@question)+'/cancel_vote', method: :delete, class: 'cancelvote_question_link', remote: true, format: :json
+      p Rating: #{@question.votes_sum}
 
 h2 Answers
 .answers

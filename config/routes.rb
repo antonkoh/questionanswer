@@ -7,10 +7,16 @@ Rails.application.routes.draw do
   resources :questions do
     resources :answers, shallow: true
     resources :comments, only: [:new, :create]
+    post :vote_up, on: :member
+    post :vote_down, on: :member
+    delete :cancel_vote, on: :member
   end
 
   resources :answers, only: [] do
     resources :comments, only: [:new, :create]
+    post :vote_up, on: :member
+    post :vote_down, on: :member
+    delete :cancel_vote, on: :member
   end
 
   resources :attachments, only: [:destroy]

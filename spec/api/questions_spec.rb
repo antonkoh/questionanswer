@@ -2,114 +2,72 @@ require 'rails_helper'
 
 RSpec.describe "Questions API" do
   describe "GET /index" do
-    context "unauthorized" do
-      it 'returns 401 status has no access token' do
-        get '/api/v1/questions', format: :json
-        expect(response).to have_http_status(:unauthorized)
-      end
+    let (:url) {'/api/v1/questions'}
+    let(:method) {:get}
 
-      it 'returns 401 status has incorrect access token' do
-        get '/api/v1/questions', format: :json, acces_token: '1234'
-        expect(response).to have_http_status(:unauthorized)
-      end
-    end
+    it_behaves_like "API Authenticable"
 
     context "authorized" do
       let(:access_token) {create(:access_token)}
       let!(:questions) {create_list(:question, 2)}
-      let(:question) {questions.first}
-      let!(:answer) {create(:answer, question: question)}
+      let!(:answer) {create(:answer, question: questions.first)}
 
       before do
-        get '/api/v1/questions', format: :json, access_token: access_token.token
+        do_request(method,url,access_token: access_token.token)
       end
 
-      it 'returns 200 status' do
-        expect(response).to have_http_status(:ok)
-      end
-
-      it 'returns list of questions' do
-        expect(response.body).to have_json_size(2).at_path("questions")
-      end
-
-      %w(id body title created_at updated_at).each do |attr|
-        it "question contains #{attr}" do
-          expect(response.body).to be_json_eql(question.send(attr).to_json).at_path("questions/0/#{attr}")
+      context "questions list" do
+        it_behaves_like "API List Contents", 'id body title created_at updated_at votes_sum' do
+          let(:contents) {questions}
         end
       end
 
-      context "answers" do
-        it 'includes answers into question' do
-          expect(response.body).to have_json_size(1).at_path("questions/0/answers")
-        end
-
-        %w(id body created_at updated_at).each do |attr|
-          it "answer contains #{attr}" do
-            expect(response.body).to be_json_eql(answer.send(attr).to_json).at_path("questions/0/answers/0/#{attr}")
-          end
+      context "answers in question" do
+        it_behaves_like "API List Contents", 'id body created_at updated_at votes_sum' do
+          let(:contents) {questions.first.answers}
+          let(:substitute_path_prefix) {'questions/0'}
         end
       end
-
-
     end
-
-
   end
 
   describe "GET /questions/#" do
     let(:question) {create(:question)}
     let(:url) {"/api/v1/questions/#{question.id}"}
+    let(:method) {:get}
     let!(:attachments) {create_list(:attachment, 2, attachmentable_id: question.id, attachmentable_type: 'Question')}
-    let!(:attachment) {attachments.first}
 
-    context "unauthorized" do
-      it 'returns 401 status has no access token' do
-        get url, format: :json
-        expect(response).to have_http_status(:unauthorized)
-      end
-
-      it 'returns 401 status has incorrect access token' do
-        get url, format: :json, acces_token: '1234'
-        expect(response).to have_http_status(:unauthorized)
-      end
-    end
+    it_behaves_like "API Authenticable"
 
     context "authorized" do
       let(:access_token) {create(:access_token)}
 
       before do
-        get url, format: :json, access_token: access_token.token
+        do_request(method,url, access_token: access_token.token)
       end
 
-      it 'returns 200 status' do
-        expect(response).to have_http_status(:ok)
-      end
-
-
-      %w(id body title created_at updated_at).each do |attr|
-        it "question contains #{attr}" do
-          expect(response.body).to be_json_eql(question.send(attr).to_json).at_path("question/#{attr}")
-        end
-      end
-
-      it 'returns list of attachments' do
-        expect(response.body).to have_json_size(2).at_path("question/attachments")
-      end
-
-
-       %w(id created_at updated_at).each do |attr|
-         it "attachment contains #{attr}" do
-           expect(response.body).to be_json_eql(attachment.send(attr).to_json).at_path("question/attachments/0/#{attr}")
+       context 'question item' do
+         it_behaves_like "API Single Contents", 'id body title created_at updated_at votes_sum' do
+           let(:single) {question}
          end
        end
 
-      it "attachment contains name" do
-        expect(response.body).to be_json_eql(attachment.file.filename.to_json).at_path("question/attachments/0/name")
-      end
 
-      it "attachment contains url" do
-        expect(response.body).to be_json_eql(attachment.file.url.to_json).at_path("question/attachments/0/url")
-      end
+       context 'attachments in question' do
+         it_behaves_like "API List Contents", 'id created_at updated_at' do
+           let(:contents) {question.attachments}
+           let(:substitute_path_prefix) {'question'}
+         end
+
+
+        it "attachment contains name" do
+          expect(response.body).to be_json_eql(attachments.first.file.filename.to_json).at_path("question/attachments/0/name")
+        end
+
+        it "attachment contains url" do
+          expect(response.body).to be_json_eql(attachments.first.file.url.to_json).at_path("question/attachments/0/url")
+        end
+     end
     end
 
 
@@ -118,67 +76,51 @@ RSpec.describe "Questions API" do
   describe "POST /questions" do
 
     let(:url) {'/api/v1/questions'}
+    let(:method) {:post}
+    let(:include_options) {{question:FactoryGirl.attributes_for(:question)}}
+    let(:question) {double(Question, include_options[:question].merge(votes_sum: 0))}
 
-    context "unauthorized" do
-      it 'returns 401 status has no access token' do
-        post url, question: FactoryGirl.attributes_for(:question), format: :json
-        expect(response).to have_http_status(:unauthorized)
-      end
 
-      it 'returns 401 status has incorrect access token' do
-        post url, question: FactoryGirl.attributes_for(:question), options:{acces_token: '1234'}, format: :json
-        expect(response).to have_http_status(:unauthorized)
-      end
-    end
-
+    it_behaves_like "API Authenticable"
 
 
     context "authorized" do
       let(:me) {create(:user)}
       let(:access_token) {create(:access_token, resource_owner_id: me.id)}
-
-
+      let(:with_invalid_options) {{question: FactoryGirl.attributes_for(:invalid_question), access_token: access_token.token}}
 
       context "when saved successfully" do
 
-        it 'returns 200 status' do
-          post url, question: FactoryGirl.attributes_for(:question), access_token: access_token.token, format: :json
-          expect(response).to  have_http_status(:ok)
-        end
-
-
         it 'creates new question in DB for the current user' do
-          expect {post url, question: FactoryGirl.attributes_for(:question), access_token: access_token.token, format: :json}.to change(me.questions, :count).by(1)
+           expect {do_request(method,url,include_options.merge(access_token: access_token.token))}.to change(me.questions, :count).by(1)
         end
 
-
-
-
-        %w(id body title created_at updated_at).each do |attr|
-          it "question contains #{attr}" do
-            post url, question: FactoryGirl.attributes_for(:question), access_token: access_token.token, format: :json
-            expect(response.body).to be_json_eql(question.send(attr).to_json).at_path("question/#{attr}")
+        context 'contents' do
+          before do
+            do_request(method,url,include_options.merge(access_token: access_token.token))
+          end
+          it_behaves_like "API Single Contents", 'body title votes_sum' do
+            let(:single) {question}
+            let(:substitute_single_name) {'question'}
           end
         end
-
-
       end
 
       context "when unsaved" do
         it 'does not save a question in DB' do
-          expect {post url, question: FactoryGirl.attributes_for(:invalid_question), access_token: access_token.token,format: :json}.to_not change(Question, :count)
-        end
+           expect {do_request(method,url,with_invalid_options)}.to_not change(Question, :count)
+         end
 
 
         it 'returns 422 status' do
-          post url,  question: FactoryGirl.attributes_for(:invalid_question), access_token: access_token.token,format: :json
-          expect(response).to have_http_status(:unprocessable_entity)
-        end
+          do_request(method,url,with_invalid_options)
+           expect(response).to have_http_status(:unprocessable_entity)
+         end
 
         it 'renders errors' do
-          post url,  question: FactoryGirl.attributes_for(:invalid_question), access_token: access_token.token, format: :json
-          expect(response.body).to have_json_size(2).at_path("errors")
-        end
+          do_request(method,url,with_invalid_options)
+           expect(response.body).to have_json_size(2).at_path("errors")
+         end
       end
     end
   end

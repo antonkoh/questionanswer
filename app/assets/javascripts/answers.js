@@ -34,7 +34,7 @@ $(document).ready(function() {
     $('form.edit_answer').bind('ajax:before', function () {
         $('.answer-errors').empty();
     }).bind('ajax:success', function(event, data, status, xhr) {
-        answer = $.parseJSON(xhr.responseText);
+        answer = $.parseJSON(xhr.responseText).answer;
         $('.answer.read_answer_section#answer_' + answer.id).children().first().replaceWith("<p>" + answer.body + "</p>");
         answerReadMode();
     }).bind('ajax:error', function(event,xhr,status,error) {

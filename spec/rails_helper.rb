@@ -64,6 +64,7 @@ RSpec.configure do |config|
   config.include Devise::TestHelpers, type: :controller
   config.include ControllersHelper, type: :controller
   config.include AcceptanceHelper, type: :feature
+  config.include ApiHelpers
 
   Shoulda::Matchers.configure do |config|
     config.integrate do |with|
