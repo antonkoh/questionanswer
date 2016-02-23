@@ -18,9 +18,6 @@ RSpec.describe Ability, type: :model do
 
     it {should_not be_able_to :create, Comment}
 
-    it {should be_able_to :votes_sum, Question}
-    it {should be_able_to :votes_sum, Answer}
-
     it {should_not be_able_to :vote_up, Question}
     it {should_not be_able_to :vote_up, Answer}
     it {should_not be_able_to :vote_down, Question}
@@ -31,8 +28,14 @@ RSpec.describe Ability, type: :model do
 
   describe "admin" do
     let(:user) {create(:user, admin: true)}
+    let!(:own_question) {create(:question, user:user)}
+    let!(:not_own_question) {create(:question, user: create(:user))}
+    let!(:own_answer) {create(:answer, question:not_own_question, user:user)}
+    let!(:not_own_answer) {create(:answer, question:own_question,user: create(:user))}
 
-    it {should be_able_to :manage, :all}
+    it {should be_able_to :crud, :all}
+
+    it_behaves_like "Voting Rules"
   end
 
   describe "non-admin" do
@@ -57,38 +60,7 @@ RSpec.describe Ability, type: :model do
 
     it {should be_able_to :create, Comment}
 
-    it {should be_able_to :vote_up, not_own_question}
-    it {should be_able_to :vote_down, not_own_question}
-    it {should be_able_to :vote_up, not_own_answer}
-    it {should be_able_to :vote_down, not_own_answer}
-    it {should_not be_able_to :vote_up, own_question}
-    it {should_not be_able_to :vote_down, own_question}
-    it {should_not be_able_to :vote_up, own_answer}
-    it {should_not be_able_to :vote_down, own_answer}
-    it {should be_able_to :votes_sum, Question}
-    it {should be_able_to :votes_sum, Answer}
-
-    it {should_not be_able_to :cancel_vote, own_question}
-    it {should_not be_able_to :cancel_vote, own_answer}
-
-    describe "existing vote" do
-      let!(:vote_q) {Vote.create(votable: not_own_question, user: user)}
-      let!(:vote_a) {Vote.create(votable: not_own_answer, user: user)}
-
-      it {should_not be_able_to :vote_up, not_own_question}
-      it {should_not be_able_to :vote_down, not_own_question}
-      it {should_not be_able_to :vote_up, not_own_answer}
-      it {should_not be_able_to :vote_down, not_own_answer}
-    end
-
-    describe "destroy vote" do
-      let!(:vote_q) {Vote.create(votable: not_own_question, user: user)}
-      let!(:vote_a) {Vote.create(votable: not_own_answer, user: user)}
-
-      it {should be_able_to :cancel_vote, not_own_question}
-      it {should be_able_to :cancel_vote, not_own_answer}
-
-    end
+    it_behaves_like "Voting Rules"
 
 
 

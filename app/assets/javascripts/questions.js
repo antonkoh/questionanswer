@@ -42,6 +42,7 @@ $(document).ready(function() {
         //};
     });
 
+
     PrivatePub.subscribe("/questions", function(data, channel) {
         $('.questions').append('<p><a href="/questions/' + data.new_question.id + '">' + data.new_question.title + '</a></p>');
     });

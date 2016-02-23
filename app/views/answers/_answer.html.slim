@@ -9,13 +9,23 @@
     -if can?(:create, Comment)
       em
         = link_to 'Add comment to answer', new_answer_comment_path(answer)
-
+  br
   -if can?(:update, answer)
     p
       em= link_to 'Edit answer', '#', class: 'edit_answer_link'
   -if can?(:destroy, answer)
     p
       em= link_to 'Delete answer', answer, method: :delete, remote: true
+  -if can?(:vote_up, answer)
+    p
+      em= link_to 'Upvote answer', answer_path(answer)+'/vote_up', method: :post, class: 'upvote_answer_link', remote: true, format: :json
+  -if can?(:vote_down, answer)
+    p
+      em= link_to 'Downvote answer', answer_path(answer)+'/vote_down', method: :post, class: 'downvote_answer_link', remote: true, format: :json
+  -if can?(:cancel_vote, answer)
+    p
+      em= link_to 'Cancel vote on answer', answer_path(answer)+'/cancel_vote', method: :delete, class: 'cancelvote_answer_link', remote: true, format: :json
+  p Answer rating: #{answer.votes_sum}
 = div_for(answer, class: "write_answer_section hidden") do |answer|
     = render 'answers/form', answer: answer, question: answer.question
     p

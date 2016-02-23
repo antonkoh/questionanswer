@@ -8,17 +8,20 @@ module ControllerVotable
 
   def vote_up
     @votable.vote_up(current_user)
-    render nothing:true
+    @votable.reload
+    render json: {votes_sum: @votable.votes_sum}
   end
 
   def vote_down
     @votable.vote_down(current_user)
-    render nothing:true
+    @votable.reload
+    render json: {votes_sum: @votable.votes_sum}
   end
 
   def cancel_vote
     @votable.cancel_vote(current_user)
-    render nothing:true
+    @votable.reload
+    render json: {votes_sum: @votable.votes_sum}
   end
 
   private

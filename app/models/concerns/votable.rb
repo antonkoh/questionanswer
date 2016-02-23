@@ -17,8 +17,7 @@ module Votable
   end
 
   def cancel_vote(user)
-    vote = votes.select{|vote| vote.user_id == user.id}
-    vote.destroy
+    votes.select{|vote| vote.user_id == user.id}.each {|vote| vote.destroy}
   end
 
   private
