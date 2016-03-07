@@ -178,6 +178,14 @@ RSpec.describe QuestionsController, type: :controller do
           expect(response).to redirect_to question_path(assigns(:question))
         end
 
+        it 'publishes message' do
+          q1 = create(:question)
+          allow(Question).to receive(:new) {q1}
+          expect(PrivatePub).to receive(:publish_to).with("/questions", new_question:q1)
+          post :create, question: FactoryGirl.attributes_for(:question)
+
+        end
+
       end
       context "when unsaved" do
         it 'does not save a question in DB' do
@@ -240,7 +248,11 @@ RSpec.describe QuestionsController, type: :controller do
           expect(q.body).to eq "New body"
         end
 
-        it 'renders question in JSON'
+        %w(id title body created_at updated_at).each do |attr|
+          it "renders question in JSON with #{attr}" do
+              expect(response.body).to be_json_eql(q.send(attr).to_json).at_path("question/#{attr}")
+          end
+        end
       end
 
       context "when unsaved" do
@@ -261,13 +273,23 @@ RSpec.describe QuestionsController, type: :controller do
         end
 
         it 'renders error in JSON' do
-          expect(JSON.parse(response.body).sort).to eq ["Body can't be blank", "Title can't be blank"].sort
+          expect(JSON.parse(response.body)["errors"].sort).to eq ["Body can't be blank", "Title can't be blank"].sort
         end
 
 
       end
     end
   end
+
+  describe "question votes" do
+
+    it_behaves_like "Votable Controller" do
+      let(:votable) {q}
+    end
+
+
+  end
+
 
 
 

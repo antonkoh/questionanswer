@@ -25,6 +25,10 @@ gem 'jbuilder', '~> 2.0'
 gem 'sdoc', '~> 0.4.0', group: :doc
 gem 'slim-rails'
 gem 'cocoon'
+gem 'doorkeeper'
+gem 'json_spec'
+
+gem 'active_model_serializers'
 
 
 gem 'devise'

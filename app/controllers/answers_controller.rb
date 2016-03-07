@@ -1,9 +1,14 @@
 class AnswersController < ApplicationController
-  before_action :authenticate_user!
-  before_action :load_answer, only: [:edit, :update, :destroy]
+  include ControllerVotable
+
+
+  before_action :authenticate_user!, only: [:create,:update,:destroy]
+  before_action :load_answer, only: [:update, :destroy]
   #before_action :check_edit_rights, only: [:edit]
 
   authorize_resource
+
+
 
   def create
     @question = Question.find(params[:question_id])
@@ -32,7 +37,7 @@ class AnswersController < ApplicationController
           when @answer.update(answer_params)
             render json: @answer
           else
-            render json: @answer.errors.full_messages, status: :unprocessable_entity
+            render json: {errors: @answer.errors.full_messages}, status: :unprocessable_entity
         end
       end
     end
@@ -41,6 +46,8 @@ class AnswersController < ApplicationController
   def destroy
     @answer.destroy
   end
+
+
 
 
 

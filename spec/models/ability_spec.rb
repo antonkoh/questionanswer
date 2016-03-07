@@ -18,16 +18,24 @@ RSpec.describe Ability, type: :model do
 
     it {should_not be_able_to :create, Comment}
 
-    # it {should be_able_to :read, Attachment}
-    # it {should_not be_able_to :create, Attachment}
-    # it {should_not be_able_to :update, Attachment}
-    # it {should_not be_able_to :destroy, Attachment}
+    it {should_not be_able_to :vote_up, Question}
+    it {should_not be_able_to :vote_up, Answer}
+    it {should_not be_able_to :vote_down, Question}
+    it {should_not be_able_to :vote_down, Answer}
+
+
   end
 
   describe "admin" do
     let(:user) {create(:user, admin: true)}
+    let!(:own_question) {create(:question, user:user)}
+    let!(:not_own_question) {create(:question, user: create(:user))}
+    let!(:own_answer) {create(:answer, question:not_own_question, user:user)}
+    let!(:not_own_answer) {create(:answer, question:own_question,user: create(:user))}
 
-    it {should be_able_to :manage, :all}
+    it {should be_able_to :crud, :all}
+
+    it_behaves_like "Voting Rules"
   end
 
   describe "non-admin" do
@@ -52,8 +60,10 @@ RSpec.describe Ability, type: :model do
 
     it {should be_able_to :create, Comment}
 
-    #it {should be_able_to :read, Attachment}
-    #it {should_not be_able_to :destroy, Attachment}
+    it_behaves_like "Voting Rules"
+
+
+
   end
 
 end

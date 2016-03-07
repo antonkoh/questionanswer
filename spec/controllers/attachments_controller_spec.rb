@@ -54,7 +54,10 @@ RSpec.describe AttachmentsController, type: :controller do
           expect{delete :destroy, id: a, format: :js}.to_not change(Attachment, :count)
         end
 
-        it 'returns 401 response'
+        it 'returns 401 response' do
+          delete :destroy, id:a, format: :js
+          expect(response).to have_http_status(:unauthorized)
+        end
       end
     end
 
@@ -100,7 +103,10 @@ RSpec.describe AttachmentsController, type: :controller do
           expect{delete :destroy, id: a, format: :js}.to_not change(Attachment, :count)
         end
 
-        it 'returns 401 response'
+        it 'returns 401 response' do
+          delete :destroy, id:a, format: :js
+          expect(response).to have_http_status(:unauthorized)
+        end
       end
     end
 
